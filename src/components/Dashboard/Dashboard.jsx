@@ -1,9 +1,8 @@
-// Dashboard.jsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import RecipeCard from '../RecipeCard/RecipeCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faPlus } from '@fortawesome/free-solid-svg-icons';
 import './Dashboard.css';
 import { recipes } from '../../data/recipes'; // Adjust the path based on your folder structure
 
@@ -22,7 +21,7 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-      {/* Header with Search Bar, Title, and Cart Icon */}
+      {/* Header with Search Bar, Title, Cart Icon, and Plus Icon */}
       <header className="dashboard-header">
         <div className="search-bar">
           <input
@@ -33,9 +32,14 @@ function Dashboard() {
           />
         </div>
         <h1>re$ipe</h1>
-        <Link to="/cart" className="cart-icon">
-          <FontAwesomeIcon icon={faShoppingCart} />
-        </Link>
+        <div className="icon-group">
+          <Link to="/cart" className="cart-icon">
+            <FontAwesomeIcon icon={faShoppingCart} />
+          </Link>
+          <Link to="/recipe-form" className="add-button">
+            <FontAwesomeIcon icon={faPlus} />
+          </Link>
+        </div>
       </header>
 
       {/* Recommended Section */}
