@@ -1,14 +1,20 @@
+// RecipeCard.jsx
 import React from 'react';
-import './RecipeCard.css';  // Import the CSS file
+import { useNavigate } from 'react-router-dom';
+import './RecipeCard.css';
 
-function RecipeCard({ title, imageUrl, cuisineType }) {
+function RecipeCard({ id, title, imageUrl, cuisineType }) {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/recipe/${id}`);
+  };
+
   return (
-    <div className="recipe-card">
-      <h3 className="title">Title: {title}</h3>
-      <div className="image-container">
-        <img src={imageUrl} alt={title} />
-      </div>
-      <p className="cuisine">Type of Cuisine: {cuisineType}</p>
+    <div className="recipe-card" onClick={handleClick}>
+      <img src={imageUrl} alt={title} />
+      <h3>{title}</h3>
+      <p>{cuisineType}</p>
     </div>
   );
 }

@@ -1,16 +1,20 @@
+// App.js
 import React from 'react';
-//import RecipeForm from './components/RecipeForm';  // Adjust path as needed
-import Dashboard from './components/Dashboard/Dashboard';  // Adjust path as needed
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Dashboard from './components/Dashboard/Dashboard';
+import RecipeDetail from './components/RecipeDetail/RecipeDetail';
+import Cart from './components/Cart/Cart'; // If you have a Cart component
 
 function App() {
   return (
-    <div className="App">
-      
-      <Dashboard />
-      
-
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/recipe/:id" element={<RecipeDetail />} />
+        <Route path="/cart" element={<Cart />} />
+        {/* Add other routes if needed */}
+      </Routes>
+    </Router>
   );
 }
 

@@ -1,0 +1,109 @@
+
+.recipe-detail {
+    max-width: 1000px; /* Increased width for better layout */
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .back-button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .recipe-detail h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Top Row: Photo and Ingredients */
+  .top-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  
+  .photo-container {
+    flex: 1;
+    min-width: 300px;
+    margin-right: 20px;
+  }
+  
+  .recipe-image {
+    width: 100%;
+    height: auto;
+    max-width: 300px;
+  }
+  
+  .ingredients-container {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .ingredients-container h2 {
+    margin-top: 0;
+  }
+  
+  .ingredients-list {
+    margin-left: 20px;
+  }
+  
+  .ingredients-list li {
+    margin-bottom: 5px;
+  }
+  
+  /* Bottom Row: Description and Steps */
+  .bottom-row {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .description-container {
+    flex: 1;
+    min-width: 300px;
+    margin-right: 20px;
+  }
+  
+  .description-container h2 {
+    margin-top: 0;
+  }
+  
+  .description {
+    /* Additional styling if needed */
+  }
+  
+  .steps-container {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .steps-container h2 {
+    margin-top: 0;
+  }
+  
+  .steps-list {
+    margin-left: 20px;
+  }
+  
+  .steps-list li {
+    margin-bottom: 5px;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 800px) {
+    .top-row, .bottom-row {
+      flex-direction: column;
+    }
+  
+    .photo-container, .ingredients-container, .description-container, .steps-container {
+      margin-right: 0;
+      min-width: 100%;
+    }
+  
+    .photo-container, .description-container {
+      margin-bottom: 20px;
+    }
+  }
+  
