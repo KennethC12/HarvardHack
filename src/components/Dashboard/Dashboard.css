@@ -1,0 +1,130 @@
+/* Container for both cart icon and plus button */
+.icon-group {
+  position: absolute;
+  top: 35px;
+  right: 30px;
+  display: flex;
+  gap: 15px; /* Space between the icons */
+}
+
+/* Style the cart icon */
+.cart-icon {
+  font-size: 24px;
+  text-decoration: none;
+  color: #000;
+}
+
+.cart-icon:hover {
+  color: #555;
+}
+
+/* Style the plus button */
+.add-button {
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #000;
+}
+
+.add-button:hover {
+  color: #555;
+}
+
+/* Dashboard container */
+.dashboard {
+  text-align: center;
+  position: relative;
+  padding-top: 20px; /* Add some padding at the top for spacing */
+  background-size: cover;
+}
+
+/* Position the search bar within the header */
+.search-bar {
+  position: absolute;
+  top: 35px;
+  left: 30px;
+}
+
+/* Style the search bar input */
+.search-bar input {
+  width: 250px;
+  padding: 7.5px;
+  font-size: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Remove extra margin from the header title */
+.dashboard-header h1 {
+  margin-top: 0;
+}
+
+/* Style for the card grid to enable horizontal scrolling */
+.card-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: 20px;
+  padding: 20px;
+  scroll-behavior: smooth;
+}
+
+/* Optional: Hide scrollbar in WebKit browsers (Chrome, Safari) */
+.card-grid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.card-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.card-grid::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.card-grid::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Style for RecipeCard component to ensure consistent sizing */
+.recipe-card {
+  min-width: 200px;
+  flex: 0 0 auto;
+}
+
+/* Style for messages inside card-grid (e.g., "No recipes found.") */
+.card-grid p {
+  width: 100%;
+  text-align: center;
+}
+
+/* Adjust h2 heading styles if needed */
+h2 {
+  margin-top: 40px;
+  text-align: left;
+  padding-left: 20px;
+}
+
+/* Adjustments for responsiveness */
+@media (max-width: 600px) {
+  .search-bar input {
+    width: 150px;
+  }
+
+  .icon-group {
+    top: 25px;
+    right: 20px;
+  }
+
+  .cart-icon {
+    font-size: 20px;
+  }
+
+  .add-button {
+    font-size: 20px;
+  }
+}
