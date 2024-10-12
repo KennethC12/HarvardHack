@@ -35,6 +35,7 @@ const Cart = () => {
   const loadUserInfo = async (uid) => {
     const userDocRef = doc(db, 'userInfo', uid);
     const userDoc = await getDoc(userDocRef);
+    
     if (userDoc.exists()) {
       const userData = userDoc.data();
       setPaymentInfo({
@@ -45,7 +46,21 @@ const Cart = () => {
         address: userData.address || '',
         zipCode: userData.zipCode || '',
       });
-      setCoins(userData.coins || 0); // Load user's existing coins
+      setCoins(userData.coins || 0); // Load user's existing coins from Firestore
+      setTimeFrame(userData.timeFrame || ''); // Load saved time frame
+    } else {
+      // If the document doesn't exist, create it with default values
+      await setDoc(userDocRef, {
+        cardNumber: '',
+        cvc: '',
+        expDate: '',
+        name: '',
+        address: '',
+        zipCode: '',
+        timeFrame: '',
+        coins: 0, // Initialize coins to 0 for a new user
+      });
+      setCoins(0); // Set coins to 0 for new users
     }
   };
 
@@ -102,8 +117,9 @@ const Cart = () => {
     }
 
     const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
-    const coinReward = Math.floor(totalPrice * 0.2);
+    const coinReward = Math.floor(totalPrice * 0.2); // Coins earned based on 20% of the total price
 
+    // Order details
     const order = {
       userId: userId || 'N/A', // Ensure this is never undefined
       items: cartItems.map((item) => ({
@@ -122,22 +138,33 @@ const Cart = () => {
       orderDate: new Date().toISOString(),
     };
 
+    console.log('Order:', order); // Debugging log to check order structure
+
     try {
+      // Copy recipes to userRecipes
       for (const item of cartItems) {
         if (!item.id) {
           console.error('Cart item is missing id:', item);
           continue; // Skip items with no id
         }
-
         await copyRecipeForUser(item.id, userId);
       }
 
+      // Add the order to the 'orders' subcollection under 'userInfo'
       const userOrdersRef = collection(db, 'userInfo', userId, 'orders');
       await addDoc(userOrdersRef, order);
 
+      // Update the user document with payment info, time frame, and coins
       const userDocRef = doc(db, 'userInfo', userId);
       await updateDoc(userDocRef, {
-        coins: coins + coinReward,
+        cardNumber: paymentInfo.cardNumber,
+        cvc: paymentInfo.cvc,
+        expDate: paymentInfo.expDate,
+        name: paymentInfo.name,
+        address: paymentInfo.address,
+        zipCode: paymentInfo.zipCode,
+        timeFrame: timeFrame,
+        coins: coins + coinReward, // Update the coins field with the new total coins
       });
 
       alert(`Order placed successfully! You earned ${coinReward} coins. Redirecting to dashboard...`);
