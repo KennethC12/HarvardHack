@@ -110,7 +110,7 @@ function Dashboard() {
           />
         </div>
 
-        <h1>re$ipe</h1>
+        <h1> re$ipe</h1>
 
         <div className="icon-group">
           <Link to="/cart" className="cart-icon">

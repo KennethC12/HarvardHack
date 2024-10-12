@@ -2,16 +2,18 @@
 
 /* Move the title higher */
 .dashboard-header h1 {
-  margin-top: 50px; /* Reduced margin to move the title higher */
+  margin-top: 30px; /* Reduced margin to move the title higher */
+  background: -webkit-linear-gradient(#c1cde9, #F6EBB4, #FBDBEC);
   text-align: left;
   padding-left: 50px;
   font-size: 48px;
+
 }
 
 /* Center the search bar and make it bigger */
 .search-bar {
   position: absolute;
-  top: 50px;
+  top: 40px;
   left: 50%;
   transform: translateX(-50%);
 }
@@ -66,7 +68,7 @@
 /* Container for both cart icon and plus button */
 .icon-group {
   position: absolute;
-  top: 5.5%;
+  top: 5.8%;
   right: 50px;
   display: flex;
   gap: 20px;
