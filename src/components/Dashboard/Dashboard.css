@@ -29,7 +29,7 @@
 .cuisine-button-group {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 30px; /* Increased gap between cuisine buttons to add spacing */
   margin-top: 20px; /* Keep this to space it properly under the search bar */
   margin-bottom: 10px; /* Reduce the gap between buttons and recipe cards */
 }
@@ -47,14 +47,14 @@
 
 /* Style for the icons */
 .cuisine-icon {
-  font-size: 30px; /* Adjust icon size */
-  margin-bottom: 5px; /* Space between icon and label */
+  font-size: 50px; /* Increased icon size to make them bigger */
+  margin-bottom: 8px; /* Add more space between the icon and label */
 }
 
 /* Style for the cuisine label */
 .cuisine-label {
   font-weight: normal; /* Use a normal font weight */
-  font-size: 14px; /* Adjust text size */
+  font-size: 16px; /* Increased the text size to be more proportionate with the icons */
   color: #000;
 }
 
@@ -159,6 +159,7 @@ h2 {
   margin: 20px auto;
   width: 85%;
 }
+
 .coins-button {
   font-size: 30px;
   text-decoration: none;
@@ -168,6 +169,7 @@ h2 {
 .coins-button:hover {
   color: #555;
 }
+
 /* Adjustments for responsiveness */
 @media (max-width: 600px) {
   .search-bar input {
