@@ -159,7 +159,15 @@ h2 {
   margin: 20px auto;
   width: 85%;
 }
+.coins-button {
+  font-size: 30px;
+  text-decoration: none;
+  color: #000;
+}
 
+.coins-button:hover {
+  color: #555;
+}
 /* Adjustments for responsiveness */
 @media (max-width: 600px) {
   .search-bar input {

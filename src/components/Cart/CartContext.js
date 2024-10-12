@@ -1,9 +1,9 @@
 import React, { createContext, useState } from 'react';
 
-// Create the CartContext
-export const CartContext = createContext();  // Do not initialize as null
+// Create a context for the cart
+export const CartContext = createContext();
 
-// CartProvider to wrap around components that need the context
+// CartProvider component to provide the cart context to the app
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
 
@@ -12,9 +12,11 @@ export const CartProvider = ({ children }) => {
     setCartItems((prevItems) => [...prevItems, recipe]);
   };
 
-  // Function to remove items from the cart
-  const removeFromCart = (recipeTitle) => {
-    setCartItems((prevItems) => prevItems.filter(item => item.title !== recipeTitle));
+  // Function to remove an item from the cart by recipe id
+  const removeFromCart = (recipeToRemove) => {
+    setCartItems((prevItems) =>
+      prevItems.filter((recipe) => recipe.id !== recipeToRemove.id) // Remove based on unique ID
+    );
   };
 
   return (

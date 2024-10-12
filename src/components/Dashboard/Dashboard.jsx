@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import RecipeCard from '../RecipeCard/RecipeCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faPlus, faSignOutAlt, faCoins } from '@fortawesome/free-solid-svg-icons'; // Added faSignOutAlt icon
 import './Dashboard.css';
-import { db } from '../../firebase-config'; // Firestore instance
+import { auth, db } from '../../firebase-config'; // Firestore instance and auth
+import { signOut } from 'firebase/auth'; // Import signOut from Firebase
 import { collection, getDocs } from 'firebase/firestore'; // Firestore functions
+
 
 function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,6 +15,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [cuisineOfTheDay, setCuisineOfTheDay] = useState(''); // Store the current cuisine of the day
   const [selectedCuisine, setSelectedCuisine] = useState(''); // Store the selected cuisine for filtering
+  const navigate = useNavigate();
 
   // Fetch recipes from Firestore on component mount
   useEffect(() => {
@@ -39,6 +42,16 @@ function Dashboard() {
   // Handle cuisine selection
   const handleCuisineSelect = (cuisine) => {
     setSelectedCuisine(cuisine);
+  };
+
+  // Handle sign out
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigate('/auth'); // Redirect to the login/signup page after sign-out
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   // Group the recipes by cuisine type
@@ -113,12 +126,20 @@ function Dashboard() {
         <h1>re$ipe</h1>
 
         <div className="icon-group">
+          {/* Add the coin icon as a link */}
+          <Link to="/rewards" className="coins-button">
+            <FontAwesomeIcon icon={faCoins} />
+          </Link>
           <Link to="/cart" className="cart-icon">
             <FontAwesomeIcon icon={faShoppingCart} />
           </Link>
           <Link to="/recipe-form" className="add-button">
             <FontAwesomeIcon icon={faPlus} />
           </Link>
+          {/* Sign out button */}
+          <button className="sign-out-button" onClick={handleSignOut}>
+            <FontAwesomeIcon icon={faSignOutAlt} />
+          </button>
         </div>
       </div>
 

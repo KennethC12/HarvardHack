@@ -1,14 +1,32 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { CartContext} from './CartContext'; // Ensure correct path
 
-function Cart() {
+
+const Cart = () => {
+  const { cartItems, removeFromCart } = useContext(CartContext);
+
+  if (!cartItems) {
+    return <div>Error: Cart context is not available.</div>;
+  }
+
   return (
     <div>
       <h2>Your Cart</h2>
-      {/* Cart items go here */}
-      <Link to="/">← Back to Dashboard</Link>
+      {cartItems.length === 0 ? (
+        <p>Your cart is empty.</p>
+      ) : (
+        <ul>
+          {cartItems.map((recipe) => (
+            <li key={recipe.id}>
+              <h3>{recipe.title}</h3>
+              <img src={recipe.imageUrl} alt={recipe.title} width="150" />
+              <button onClick={() => removeFromCart(recipe)}>Remove</button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
-}
+};
 
 export default Cart;
