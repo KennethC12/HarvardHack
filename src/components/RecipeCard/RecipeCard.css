@@ -1,0 +1,52 @@
+/* RecipeCard.css */
+
+.recipe-card {
+    /* Existing styles */
+    position: relative;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .recipe-card img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .recipe-card h3 {
+    margin-top: 10px;
+  }
+  
+  .recipe-card p {
+    margin: 5px 0;
+  }
+  
+  .card-buttons {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .add-to-cart-button,
+  .buy-now-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 7px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 3px;
+  }
+  
+  .buy-now-button {
+    background-color: #28a745;
+  }
+  
+  .add-to-cart-button:hover {
+    background-color: #0069d9;
+  }
+  
+  .buy-now-button:hover {
+    background-color: #218838;
+  }
+  
