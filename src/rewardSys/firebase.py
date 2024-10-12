@@ -1,6 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+from firebase_admin import db
 
 import usrLogin
 
@@ -50,7 +51,13 @@ def login(email, display, addr, pass1):
 # Ignore dupes cuz uh im not paid enough for this
 def addUser(Username, Addr):
     size = user_ref.__sizeof__
-    newUser = {"Username": Username, "UID": size+1, "Points": 0, "Addr": Addr}
+    db.collection("Users").push({
+        "Username": Username,
+          "UID": size+1,
+            "Points": 0,
+            "Addr": Addr
+    })
+    
 
 
 # Extra feature
@@ -76,6 +83,13 @@ def readPoints(UserId):
 #def editRedeemables():
     # TODO
 
+def readDb(db):
+    if (db == 1):
+        print(user_ref)
+        print(10)
+    else:
+        print(recipie_ref)
+        print(12)
 
 
 # Takes user and how many points the item is and then returns true or false if they can redeem such a item
