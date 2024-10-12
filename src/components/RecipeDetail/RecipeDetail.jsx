@@ -1,15 +1,56 @@
-// RecipeDetail.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './RecipeDetail.css';
-import { recipes } from '../../data/recipes';
+import { db } from '../../firebase-config';  // Import Firestore instance from your config
+import { doc, getDoc } from 'firebase/firestore';  // Firestore functions
 
 function RecipeDetail() {
-  const { id } = useParams();
+  const { id } = useParams();  // Get the recipe ID from the URL
   const navigate = useNavigate();
 
-  // Find the recipe that matches the id from the URL
-  const recipe = recipes.find((recipe) => recipe.id === parseInt(id));
+  const [recipe, setRecipe] = useState(null);  // Store the fetched recipe
+  const [loading, setLoading] = useState(true);  // Loading state
+  const [error, setError] = useState(null);  // Error state
+
+  // Fetch the recipe from Firestore by its ID
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      try {
+        const recipeDoc = await getDoc(doc(db, 'recipes', id));
+        if (recipeDoc.exists()) {
+          setRecipe(recipeDoc.data());  // Set the recipe data
+        } else {
+          setError('Recipe not found.');
+        }
+      } catch (err) {
+        console.error('Error fetching recipe:', err);
+        setError('Failed to fetch recipe.');
+      } finally {
+        setLoading(false);  // Stop loading after fetching
+      }
+    };
+
+    fetchRecipe();
+  }, [id]);  // Fetch recipe when the component mounts and when `id` changes
+
+  if (loading) {
+    return (
+      <div className="recipe-detail">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="recipe-detail">
+        <button className="back-button" onClick={() => navigate(-1)}>
+          ← Back
+        </button>
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   if (!recipe) {
     return (
