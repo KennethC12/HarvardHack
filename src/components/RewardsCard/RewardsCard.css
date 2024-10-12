@@ -1,0 +1,32 @@
+/* RewardsCard.css */
+
+.rewards-card {
+    background-color: #f8f8f8;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .rewards-card h3 {
+    margin-bottom: 10px;
+  }
+  
+  .rewards-card p {
+    margin-bottom: 10px;
+  }
+  
+  .redeem-button {
+    padding: 10px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .redeem-button:hover {
+    background-color: #218838;
+  }
+  

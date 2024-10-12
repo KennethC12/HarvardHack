@@ -14,6 +14,7 @@ function RecipeForm() {
   const [ingredients, setIngredients] = useState([]);
   const [ingredientInput, setIngredientInput] = useState('');
   const [difficulty, setDifficulty] = useState('easy'); // Default to 'easy'
+  const [price, setPrice] = useState(''); // New state for price
   const [image, setImage] = useState(null);  // For handling the image file
   const [imageUrl, setImageUrl] = useState('');  // For storing the image URL
 
@@ -36,6 +37,7 @@ function RecipeForm() {
         cuisineType: cuisineType,
         description: description,
         difficulty: difficulty,
+        price: parseFloat(price), // Save the price as a float
         ingredients: ingredients,
         steps: steps,
         imageUrl: downloadURL,  // Add the image URL here
@@ -55,6 +57,7 @@ function RecipeForm() {
         setIngredients([]);
         setIngredientInput('');
         setDifficulty('easy'); // Reset difficulty to default 'easy'
+        setPrice(''); // Reset price to empty
         setImage(null);
         setImageUrl('');
 
@@ -125,6 +128,8 @@ function RecipeForm() {
             <option value="American">American</option>
             <option value="Mexican">Mexican</option>
             <option value="Taiwanese">Taiwanese</option>
+            <option value="Taiwanese">Indian</option>
+            <option value="Taiwanese">African</option>
           </select>
         </label>
 
@@ -140,6 +145,18 @@ function RecipeForm() {
             <option value="medium">Medium</option>
             <option value="hard">Hard</option>
           </select>
+        </label>
+
+        {/* Price Input */}
+        <label>
+          Price:
+          <input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            placeholder="Enter price in USD"
+            required
+          />
         </label>
 
         {/* Description */}

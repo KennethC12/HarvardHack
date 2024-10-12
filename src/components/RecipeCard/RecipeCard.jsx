@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './RecipeCard.css';
 
-function RecipeCard({ id, title, imageUrl, cuisineType }) {
+function RecipeCard({ id, title, imageUrl, cuisineType, price = 0, difficulty }) {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -17,7 +17,9 @@ function RecipeCard({ id, title, imageUrl, cuisineType }) {
         className="recipe-image"
       />
       <h3>{title}</h3>
-      <p>{cuisineType}</p>
+      <p>Cuisine: {cuisineType}</p>
+      <p>Difficulty: {difficulty}</p> 
+      <p>Price: ${price.toFixed(2)}</p>
       <div className="card-buttons">
         <button className="add-to-cart-button">Add to Cart</button>
         <button className="buy-now-button">Buy Now</button>
@@ -25,5 +27,6 @@ function RecipeCard({ id, title, imageUrl, cuisineType }) {
     </div>
   );
 }
+
 
 export default RecipeCard;

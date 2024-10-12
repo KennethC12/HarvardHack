@@ -1,16 +1,97 @@
-/* Cart.css */
-.cart-page {
-    padding: 20px;
-  }
-  
-  .back-link {
-    display: inline-block;
-    margin-top: 20px;
-    text-decoration: none;
-    color: #007bff;
-  }
-  
-  .back-link:hover {
-    text-decoration: underline;
-  }
-  
+/* Container for the entire page layout */
+.page-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  gap: 20px;
+  height: 100vh; /* Full height of the viewport */
+}
+
+/* Far left column: Cart */
+.cart-box {
+  width: 30%;
+  background-color: #f8f8f8;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+/* Middle column: Personal info and time frame */
+.middle-column {
+  width: 35%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between the personal info and delivery time frame divs */
+}
+
+/* Personal Info (Credit Card and Personal Details) */
+.personal-info {
+  background-color: #f0f0f0;
+  padding: 20px;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+}
+
+.personal-info label {
+  margin-bottom: 10px;
+  display: block;
+}
+
+.personal-info input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Delivery Time Frame Section */
+.delivery-time-frame {
+  background-color: #f0f0f0;
+  padding: 20px;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+}
+
+.delivery-time-frame label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.delivery-time-frame select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Far right column: Order Summary */
+.order-summary {
+  width: 20%;
+  background-color: #e0e0e0;
+  padding: 20px;
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.order-summary h2 {
+  margin-bottom: 15px;
+}
+
+.order-summary p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.order-summary button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.order-summary button:hover {
+  background-color: #0056b3;
+}

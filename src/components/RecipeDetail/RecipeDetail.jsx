@@ -70,8 +70,8 @@ function RecipeDetail() {
 
       {/* Top Row: Photo and Instructions */}
       <div className="top-row">
-        <div className="photo-container">
-          <img src={recipe.imageUrl} alt={recipe.title} className="recipe-image" />
+        <div className="recipe-detail-photo-container">
+          <img src={recipe.imageUrl} alt={recipe.title} className="recipe-detail-image" />
         </div>
         <div className="steps-container">
           <h2>Instructions:</h2>

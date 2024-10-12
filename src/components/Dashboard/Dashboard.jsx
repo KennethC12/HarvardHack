@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import RecipeCard from '../RecipeCard/RecipeCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart, faPlus, faSignOutAlt, faCoins } from '@fortawesome/free-solid-svg-icons'; // Added faSignOutAlt icon
+import { faShoppingCart, faPlus, faSignOutAlt, faCoins } from '@fortawesome/free-solid-svg-icons';
 import './Dashboard.css';
 import { auth, db } from '../../firebase-config'; // Firestore instance and auth
 import { signOut } from 'firebase/auth'; // Import signOut from Firebase
 import { collection, getDocs } from 'firebase/firestore'; // Firestore functions
-
 
 function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -101,7 +100,7 @@ function Dashboard() {
 
   // Cuisine buttons data
   const cuisines = [
-    { name: 'Mexican', icon: '🌮' }, // Replace with actual icon or image
+    { name: 'Mexican', icon: '🌮' },
     { name: 'Chinese', icon: '🥡' },
     { name: 'Soul Food', icon: '🍗' },
     { name: 'Korean', icon: '🍲' },
@@ -109,6 +108,8 @@ function Dashboard() {
     { name: 'American', icon: '🌭' },
     { name: 'Japanese', icon: '🍙' },
     { name: 'Taiwanese', icon: '🍱' },
+    { name: 'Indian', icon: '🥘' },
+    { name: 'African', icon: '🍛' },
   ];
 
   return (
@@ -126,7 +127,6 @@ function Dashboard() {
         <h1>re$ipe</h1>
 
         <div className="icon-group">
-          {/* Add the coin icon as a link */}
           <Link to="/rewards" className="coins-button">
             <FontAwesomeIcon icon={faCoins} />
           </Link>
@@ -136,14 +136,12 @@ function Dashboard() {
           <Link to="/recipe-form" className="add-button">
             <FontAwesomeIcon icon={faPlus} />
           </Link>
-          {/* Sign out button */}
           <button className="sign-out-button" onClick={handleSignOut}>
             <FontAwesomeIcon icon={faSignOutAlt} />
           </button>
         </div>
       </div>
 
-      {/* Cuisine Button Group */}
       <div className="cuisine-button-group">
         {cuisines.map((cuisine) => (
           <button
@@ -161,7 +159,6 @@ function Dashboard() {
         <p>Loading recipes...</p>
       ) : (
         <>
-          {/* Recommended Section */}
           <div className="cuisine-section">
             <h2>Recommended</h2>
             <div className="card-grid">
@@ -172,13 +169,14 @@ function Dashboard() {
                   title={recipe.title}
                   imageUrl={recipe.imageUrl}
                   cuisineType={recipe.cuisineType}
+                  price={recipe.price || 0}              
+                  difficulty={recipe.difficulty || 'Unknown'} 
                 />
               ))}
             </div>
             <hr className="divider-line" />
           </div>
 
-          {/* Cuisine of the Day Section */}
           {cuisineOfTheDay && groupedRecipes[cuisineOfTheDay] && (
             <div className="cuisine-section">
               <h2>Cuisine of the Day: {cuisineOfTheDay}</h2>
@@ -190,6 +188,8 @@ function Dashboard() {
                     title={recipe.title}
                     imageUrl={recipe.imageUrl}
                     cuisineType={recipe.cuisineType}
+                    price={recipe.price || 0}              
+                    difficulty={recipe.difficulty || 'Unknown'} 
                   />
                 ))}
               </div>

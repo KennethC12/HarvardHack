@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { collection, getDocs, query, where, orderBy, doc, updateDoc } from 'firebase/firestore';
-import { auth, db } from '../../firebase-config'; // Ensure this is your Firestore and Firebase auth instance
+import { collection, getDocs, query, where, orderBy, doc, getDoc, updateDoc } from 'firebase/firestore'; // Firestore functions
+import { auth, db } from '../../firebase-config'; // Firestore instance and Firebase auth
 import { onAuthStateChanged } from 'firebase/auth'; // Import Firebase Auth state change listener
+import RewardsCard from '../RewardsCard/RewardsCard'; // Import RewardsCard component
 import './Rewards.css';
 
 const Rewards = () => {
@@ -28,39 +29,19 @@ const Rewards = () => {
   // Fetch recent purchases and completed recipes
   const fetchOrders = async (uid) => {
     try {
-      const purchasesQuery = query(
-        collection(db, 'purchases'),
-        where('userId', '==', uid), // Filter by the current user's ID
-        orderBy('purchaseDate', 'desc') // Order by date, newest first
-      );
-      const completedQuery = query(
-        collection(db, 'completedRecipes'),
-        where('userId', '==', uid), // Filter by the current user's ID
-        orderBy('completionDate', 'desc') // Order by date, newest first
+      const ordersQuery = query(
+        collection(db, 'userInfo', uid, 'orders'), // Fetch from the user's orders sub-collection
+        orderBy('orderDate', 'desc') // Order by date, newest first
       );
 
-      const [purchasesSnapshot, completedSnapshot] = await Promise.all([
-        getDocs(purchasesQuery),
-        getDocs(completedQuery),
-      ]);
-
-      const purchases = purchasesSnapshot.docs.map((doc) => ({
+      const ordersSnapshot = await getDocs(ordersQuery);
+      const userOrders = ordersSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-        type: 'purchase',
       }));
 
-      const completed = completedSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        type: 'completed',
-      }));
-
-      const allOrders = [...purchases, ...completed].sort((a, b) =>
-        new Date(b.purchaseDate || b.completionDate) - new Date(a.purchaseDate || a.completionDate)
-      );
-
-      setOrders(allOrders);
+      console.log("Fetched orders:", userOrders); // Debugging output
+      setOrders(userOrders);
     } catch (error) {
       console.error('Error fetching orders:', error);
     }
@@ -69,10 +50,10 @@ const Rewards = () => {
   // Fetch the user's coin balance from Firestore
   const fetchUserCoins = async (uid) => {
     try {
-      const userQuery = query(collection(db, 'users'), where('userId', '==', uid));
-      const userSnapshot = await getDocs(userQuery);
-      if (!userSnapshot.empty) {
-        const userData = userSnapshot.docs[0].data();
+      const userDocRef = doc(db, 'userInfo', uid);
+      const userSnapshot = await getDoc(userDocRef);
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
         setCoins(userData.coins || 0); // Set coins, default to 0 if not found
       }
     } catch (error) {
@@ -80,30 +61,22 @@ const Rewards = () => {
     }
   };
 
-  // Save the updated coin balance to Firestore
-  const updateUserCoins = async (newCoinBalance) => {
-    if (!userId) return; // Ensure the user is authenticated
-
-    try {
-      // Reference to the user document
-      const userDocRef = doc(db, 'users', userId);
-      await updateDoc(userDocRef, {
-        coins: newCoinBalance, // Update the coins field
-      });
-      setCoins(newCoinBalance); // Update local state after saving
-    } catch (error) {
-      console.error('Error updating user coins:', error);
-    }
-  };
-
-  // Function to convert coins to rewards
-  const convertCoinsToRewards = () => {
-    if (coins < 100) {
-      alert('You need at least 100 coins to convert to rewards.');
+  // Handle redeeming gift cards
+  const redeemGiftCard = async (cost) => {
+    if (coins >= cost) {
+      const newCoinBalance = coins - cost;
+      try {
+        const userDocRef = doc(db, 'userInfo', userId);
+        await updateDoc(userDocRef, {
+          coins: newCoinBalance,
+        });
+        setCoins(newCoinBalance); // Update local state
+        alert('You have redeemed your gift card!');
+      } catch (error) {
+        console.error('Error redeeming gift card:', error);
+      }
     } else {
-      const newCoinBalance = coins - 100;
-      updateUserCoins(newCoinBalance); // Save the new coin balance to Firestore
-      alert('You have successfully converted 100 coins into a reward!');
+      alert('You do not have enough coins to redeem this gift card.');
     }
   };
 
@@ -122,9 +95,9 @@ const Rewards = () => {
             <ul>
               {orders.map((order) => (
                 <li key={order.id}>
-                  <h3>{order.title}</h3>
-                  <p>{order.description}</p>
-                  <p>{order.type === 'purchase' ? 'Purchased' : 'Completed'} on: {new Date(order.purchaseDate || order.completionDate).toLocaleDateString()}</p>
+                  <h3>{order.items.map(item => item.title).join(', ')}</h3> {/* Display order item titles */}
+                  <p>Total Price: ${order.totalPrice}</p>
+                  <p>{order.type === 'purchase' ? 'Purchased' : 'Completed'} on: {new Date(order.orderDate).toLocaleDateString()}</p>
                 </li>
               ))}
             </ul>
@@ -135,12 +108,27 @@ const Rewards = () => {
       {/* Rewards Section */}
       <div className="rewards-section">
         <h1 className="rewards-title">Rewards</h1>
-        <p>Your reward details will be displayed here.</p>
+        <p>Your Balance: {coins} Coins</p>
 
-        {/* Coin Balance Section */}
-        <div className="coins-balance">
-          <h2>Your Balance: {coins} Coins</h2>
-          <button onClick={convertCoinsToRewards} className="convert-button">Convert 100 Coins to Reward</button>
+        <div className="rewards-grid">
+          <RewardsCard
+            cardType="Amazon"
+            cardValue="25"
+            coinCost={250}
+            onRedeem={() => redeemGiftCard(250)}
+          />
+          <RewardsCard
+            cardType="Visa"
+            cardValue="50"
+            coinCost={500}
+            onRedeem={() => redeemGiftCard(500)}
+          />
+          <RewardsCard
+            cardType="Subway"
+            cardValue="10"
+            coinCost={100}
+            onRedeem={() => redeemGiftCard(100)}
+          />
         </div>
       </div>
     </div>

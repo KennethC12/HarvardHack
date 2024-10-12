@@ -12,15 +12,20 @@ export const CartProvider = ({ children }) => {
     setCartItems((prevItems) => [...prevItems, recipe]);
   };
 
-  // Function to remove an item from the cart by recipe id
+  // Function to remove an item from the cart
   const removeFromCart = (recipeToRemove) => {
     setCartItems((prevItems) =>
-      prevItems.filter((recipe) => recipe.id !== recipeToRemove.id) // Remove based on unique ID
+      prevItems.filter((recipe) => recipe.id !== recipeToRemove.id)
     );
   };
 
+  // Function to clear the cart
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart }}>
       {children}
     </CartContext.Provider>
   );

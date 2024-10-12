@@ -28,16 +28,18 @@
   margin-bottom: 20px;
 }
 
-.photo-container {
+.recipe-detail-photo-container {
   flex: 1;
-  min-width: 400px; /* Increased min-width for the larger photo */
+  max-width: 400px; /* Set a max width for the image container */
   margin-right: 20px;
 }
 
-.recipe-image {
-  width: 100%;
-  height: auto;
-  max-width: 400px; /* Increased from 300px to 400px for a larger image */
+.recipe-detail-image {
+  width: 100%;       /* Make sure the image takes up the full width of its container */
+  height: auto;      /* Maintain aspect ratio */
+  max-height: 350px; /* Limit the max height */
+  object-fit: cover; /* Ensure image scales nicely without distortion */
+  border-radius: 10px; /* Optional: rounded corners */
 }
 
 .ingredients-container {
@@ -150,12 +152,12 @@
     flex-direction: column;
   }
 
-  .photo-container, .ingredients-container, .description-container, .steps-container {
+  .recipe-detail-photo-container, .ingredients-container, .description-container, .steps-container {
     margin-right: 0;
     min-width: 100%;
   }
 
-  .photo-container, .description-container {
+  .recipe-detail-photo-container, .description-container {
     margin-bottom: 20px;
   }
 }
