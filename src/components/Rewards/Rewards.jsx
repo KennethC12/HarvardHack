@@ -95,84 +95,93 @@ const Rewards = () => {
   };
 
   // Handle image upload for each order and give coins based on the difficulty
-  const handleImageUpload = async (orderId, item) => {
-    const imageFile = imageUploads[orderId];
-    if (!imageFile) {
-      alert('Please select an image.');
-      return;
-    }
+  // Handle image upload for each order and give coins based on the difficulty from the order database
+const handleImageUpload = async (orderId) => {
+  const imageFile = imageUploads[orderId];
+  if (!imageFile) {
+    alert('Please select an image.');
+    return;
+  }
 
-    setUploading((prevState) => ({
-      ...prevState,
-      [orderId]: true, // Set the specific order's uploading state to true
-    }));
+  setUploading((prevState) => ({
+    ...prevState,
+    [orderId]: true, // Set the specific order's uploading state to true
+  }));
 
-    const storageRef = ref(storage, `orders/${userId}/${orderId}/${imageFile.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+  const storageRef = ref(storage, `orders/${userId}/${orderId}/${imageFile.name}`);
+  const uploadTask = uploadBytesResumable(storageRef, imageFile);
 
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      },
-      (error) => {
-        console.error('Upload failed:', error);
-        setUploading((prevState) => ({
-          ...prevState,
-          [orderId]: false, // Stop uploading state
-        }));
-      },
-      async () => {
-        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        setUploading((prevState) => ({
-          ...prevState,
-          [orderId]: false, // Stop uploading state
-        }));
+  uploadTask.on(
+    'state_changed',
+    (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log(`Upload is ${progress}% done`);
+    },
+    (error) => {
+      console.error('Upload failed:', error);
+      setUploading((prevState) => ({
+        ...prevState,
+        [orderId]: false, // Stop uploading state
+      }));
+    },
+    async () => {
+      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+      console.log('File available at', downloadURL);
+      setUploading((prevState) => ({
+        ...prevState,
+        [orderId]: false, // Stop uploading state
+      }));
 
-        const orderDocRef = doc(db, 'userInfo', userId, 'orders', orderId);
-        const orderSnapshot = await getDoc(orderDocRef);
+      // Retrieve the order document from Firestore
+      const orderDocRef = doc(db, 'userInfo', userId, 'orders', orderId);
+      const orderSnapshot = await getDoc(orderDocRef);
 
-        if (orderSnapshot.exists()) {
-          const orderData = orderSnapshot.data();
-          const difficulty = orderData.difficulty || 'easy';
+      if (orderSnapshot.exists()) {
+        const orderData = orderSnapshot.data();
+        const difficulty = orderData.items[0].difficulty || 'easy'; // Ensure the correct difficulty is retrieved from the order data
 
-          // Calculate coins based on the order's difficulty
-          const coinsEarned = calculateCoins(difficulty);
+        // Calculate coins based on the order's difficulty
+        const coinsEarned = calculateCoins(difficulty);
 
-          // Fetch latest coin balance from Firestore before updating
-          const userDocRef = doc(db, 'userInfo', userId);
-          const userSnapshot = await getDoc(userDocRef);
-          const currentCoins = userSnapshot.exists() ? userSnapshot.data().coins || 0 : 0;
+        // Fetch the latest coin balance from Firestore before updating
+        const userDocRef = doc(db, 'userInfo', userId);
+        const userSnapshot = await getDoc(userDocRef);
+        const currentCoins = userSnapshot.exists() ? userSnapshot.data().coins || 0 : 0;
 
-          if (coinsEarned > 0) {
-            // Update Firestore to add the earned coins and mark the order as submitted
-            const updatedCoins = currentCoins + coinsEarned;
-            await updateDoc(userDocRef, {
-              coins: updatedCoins, // Update with new total coins
-            });
+        console.log(`Current coins: ${currentCoins}, Coins earned: ${coinsEarned}`);
 
-            // Mark the order as submitted in Firestore
-            await updateDoc(orderDocRef, {
-              submitted: true, // Update submitted status in Firestore
-            });
+        if (coinsEarned > 0) {
+          // Update Firestore to add the earned coins and mark the order as submitted
+          const updatedCoins = currentCoins + coinsEarned;
+          await updateDoc(userDocRef, {
+            coins: updatedCoins, // Update with new total coins
+          });
 
-            // Update local coins state
-            setCoins((prevCoins) => prevCoins + coinsEarned);
+          // Mark the order as submitted in Firestore
+          await updateDoc(orderDocRef, {
+            submitted: true, // Update submitted status in Firestore
+          });
 
-            // Mark this order as submitted locally
-            setSubmitted((prevState) => ({
-              ...prevState,
-              [orderId]: true,
-            }));
+          // Update local coins state
+          setCoins((prevCoins) => prevCoins + coinsEarned);
 
-            alert(`Upload successful! You've earned ${coinsEarned} coins.`);
-          } else {
-            alert('Upload successful, but no coins earned due to invalid difficulty.');
-          }
+          // Mark this order as submitted locally
+          setSubmitted((prevState) => ({
+            ...prevState,
+            [orderId]: true,
+          }));
+
+          alert(`Upload successful! You've earned ${coinsEarned} coins.`);
+        } else {
+          alert('Upload successful, but no coins earned due to invalid difficulty.');
         }
+      } else {
+        console.error('Order document not found.');
       }
-    );
-  };
+    }
+  );
+};
+
 
   // Handle redeeming gift cards
   const redeemGiftCard = async (cost) => {
@@ -260,20 +269,20 @@ const Rewards = () => {
           <RewardsCard
             cardType="Amazon"
             cardValue="25"
-            coinCost={25}
-            onRedeem={() => redeemGiftCard(25)}
+            coinCost={250}
+            onRedeem={() => redeemGiftCard(250)}
           />
           <RewardsCard
             cardType="Visa"
             cardValue="50"
-            coinCost={50}
-            onRedeem={() => redeemGiftCard(50)}
+            coinCost={500}
+            onRedeem={() => redeemGiftCard(500)}
           />
           <RewardsCard
             cardType="Subway"
             cardValue="10"
-            coinCost={10}
-            onRedeem={() => redeemGiftCard(10)}
+            coinCost={100}
+            onRedeem={() => redeemGiftCard(100)}
           />
         </div>
       </div>
