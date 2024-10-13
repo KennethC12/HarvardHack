@@ -269,20 +269,20 @@ const handleImageUpload = async (orderId) => {
           <RewardsCard
             cardType="Amazon"
             cardValue="25"
-            coinCost={250}
-            onRedeem={() => redeemGiftCard(250)}
+            coinCost={25}
+            onRedeem={() => redeemGiftCard(25)}
           />
           <RewardsCard
             cardType="Visa"
             cardValue="50"
-            coinCost={500}
-            onRedeem={() => redeemGiftCard(500)}
+            coinCost={50}
+            onRedeem={() => redeemGiftCard(50)}
           />
           <RewardsCard
             cardType="Subway"
             cardValue="10"
-            coinCost={100}
-            onRedeem={() => redeemGiftCard(100)}
+            coinCost={10}
+            onRedeem={() => redeemGiftCard(10)}
           />
         </div>
       </div>
