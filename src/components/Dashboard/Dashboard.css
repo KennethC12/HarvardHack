@@ -5,6 +5,7 @@
   position: relative;
   padding: 20px 50px;
   background-color: #f5f6fa; /* Optional background color */
+  
 }
 
 /* Title */
@@ -14,6 +15,7 @@
   top: 40px; /* Increased from 20px to 40px to lower the title */
   left: 50px;
   font-size: 48px;
+  
 }
 
 .title-button {
@@ -25,7 +27,7 @@
 /* Icon Group */
 .icon-group {
   position: absolute;
-  top: 40px; /* Increased from 20px to 40px to move icons down */
+  top: 60px; /* Increased from 20px to 40px to move icons down */
   right: 50px;
   display: flex;
   gap: 20px;
@@ -53,7 +55,7 @@
 .search-bar {
   position: relative;
   margin: 0 auto; /* Center horizontally */
-  margin-top: 60px; /* Decreased from 80px to 60px to move search bar up */
+  margin-top: 30px; /* Decreased from 80px to 60px to move search bar up */
   width: 400px;
 }
 
