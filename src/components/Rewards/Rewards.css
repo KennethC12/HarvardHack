@@ -63,17 +63,16 @@
 .orders-box {
     display: flex;
     flex-wrap: wrap; /* Allows items to wrap if there's not enough space */
-    justify-content: center;
+    justify-content: flex-start; /* Align items to the start of the container */
     gap: var(--gap-size);
     padding: 1.25rem;
     margin-bottom: 2.5rem;
     max-height: 450px;
-    overflow-y: auto; /* Allows vertical scrolling if necessary */
+    overflow-x: auto; /* Allows vertical scrolling if necessary */
     background-color: var(--secondary-color);
     border-radius: var(--border-radius);
     box-shadow: 0 2px 8px var(--shadow-color);
 }
-
 
 .orders-list {
     display: flex;
@@ -81,13 +80,14 @@
     padding: 0;
     margin: 0;
     list-style: none;
+    justify-content: flex-start; /* Align the order items to the start */
 }
 
 .order-item {
     flex-shrink: 0;
-    flex-basis: calc(25% - var(--gap-size)); /* Adjust the width based on container size */
-    max-width: 250px; /* Set a maximum width for the cards */
-    min-width: 180px; /* Set a minimum width for smaller screens */
+    flex-basis: calc(23.75% - var(--gap-size)); /* Adjust the width based on container size (5% smaller) */
+    max-width: 237.5px; /* 5% smaller than 250px */
+    min-width: 171px; /* 5% smaller than 180px */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -100,8 +100,8 @@
 
 /* Order image */
 .order-image {
-    width: 150px;
-    height: 150px;
+    width: 142.5px; /* 5% smaller than 150px */
+    height: 142.5px; /* 5% smaller than 150px */
     object-fit: cover;
     border-radius: var(--border-radius);
     box-shadow: 0 1px 6px var(--shadow-color);
@@ -131,6 +131,7 @@
     background-color: var(--secondary-color);
     border-radius: var(--border-radius);
     box-shadow: 0 2px 8px var(--shadow-color);
+    padding: 5% less; /* Optionally reduce padding by 5% */
 }
 
 .upload-section input {
@@ -162,6 +163,6 @@
 }
 
 .logo-image {
-    width: 100px;
+    width: 95px; /* 5% smaller than 100px */
     height: auto;
 }

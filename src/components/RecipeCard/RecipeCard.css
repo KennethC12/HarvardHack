@@ -58,6 +58,22 @@
   background-color: #218838;
 }
 
+.edit-recipe-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #f0f0f0;
+  border: none;
+  padding: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.edit-recipe-button:hover {
+  background-color: #e0e0e0;
+}
+
 /* Modifications for the "Add to Cart" button with icon */
 .add-to-cart-button {
   display: flex;

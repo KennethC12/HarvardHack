@@ -18,14 +18,16 @@ const Cart = () => {
     zipCode: '',
   });
   const [timeFrame, setTimeFrame] = useState('');
+  const [timeFrameError, setTimeFrameError] = useState(''); // Error state for time frame
+  const [cartError, setCartError] = useState(''); // Error state for cart being empty
   const navigate = useNavigate(); // To navigate after order submission
   const [coins, setCoins] = useState(0);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        setUserId(user.uid); 
-        loadUserInfo(user.uid); 
+        setUserId(user.uid);
+        loadUserInfo(user.uid);
       } else {
         setUserId(null);
       }
@@ -36,7 +38,7 @@ const Cart = () => {
   const loadUserInfo = async (uid) => {
     const userDocRef = doc(db, 'userInfo', uid);
     const userDoc = await getDoc(userDocRef);
-    
+
     if (userDoc.exists()) {
       const userData = userDoc.data();
       setPaymentInfo({
@@ -47,8 +49,8 @@ const Cart = () => {
         address: userData.address || '',
         zipCode: userData.zipCode || '',
       });
-      setCoins(userData.coins || 0); 
-      setTimeFrame(userData.timeFrame || ''); 
+      setCoins(userData.coins || 0);
+      setTimeFrame(userData.timeFrame || '');
     } else {
       await setDoc(userDocRef, {
         cardNumber: '',
@@ -58,9 +60,9 @@ const Cart = () => {
         address: '',
         zipCode: '',
         timeFrame: '',
-        coins: 0, 
+        coins: 0,
       });
-      setCoins(0); 
+      setCoins(0);
     }
   };
 
@@ -76,9 +78,20 @@ const Cart = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (paymentInfo.cardNumber.length !== 16) {
-      alert('Card number must be exactly 16 digits.');
+    // Check if cart is empty
+    if (cartItems.length === 0) {
+      setCartError('Your cart is empty. Please add at least one recipe.');
       return;
+    } else {
+      setCartError(''); // Clear cart error if cart is not empty
+    }
+
+    // Check if time frame is selected
+    if (!timeFrame) {
+      setTimeFrameError('Please select a delivery time frame.');
+      return;
+    } else {
+      setTimeFrameError(''); // Clear time frame error if valid time frame is selected
     }
 
     if (!userId) {
@@ -121,12 +134,12 @@ const Cart = () => {
         address: paymentInfo.address,
         zipCode: paymentInfo.zipCode,
         timeFrame: timeFrame,
-        coins: coins + coinReward, 
+        coins: coins + coinReward,
       });
 
       alert(`Order placed successfully! You earned ${coinReward} coins.`);
       clearCart();
-      navigate('/'); 
+      navigate('/');
     } catch (error) {
       console.error('Error placing order:', error);
       alert('Failed to place the order. Please try again.');
@@ -154,7 +167,10 @@ const Cart = () => {
       <div className="cart-box">
         <h2>Your Cart</h2>
         {cartItems.length === 0 ? (
-          <p>Your cart is empty.</p>
+          <>
+            <p>Your cart is empty.</p>
+            {cartError && <p className="error">{cartError}</p>} {/* Display cart error */}
+          </>
         ) : (
           <ul>
             {cartItems.map((recipe) => (
@@ -177,6 +193,7 @@ const Cart = () => {
           <summary>Personal Information</summary>
           <div className="personal-info">
             <form onSubmit={handleSubmit}>
+              {/* Payment form fields */}
               <label>
                 Card Number:
                 <input
@@ -257,7 +274,10 @@ const Cart = () => {
             <select
               name="timeFrame"
               value={timeFrame}
-              onChange={(e) => setTimeFrame(e.target.value)}
+              onChange={(e) => {
+                setTimeFrame(e.target.value);
+                setTimeFrameError(''); // Clear error when time frame is selected
+              }}
               required
             >
               <option value="">Select a time frame</option>
@@ -276,6 +296,7 @@ const Cart = () => {
                 ))}
               </optgroup>
             </select>
+            {timeFrameError && <p className="error">{timeFrameError}</p>} {/* Show error if any */}
           </label>
         </div>
       </div>

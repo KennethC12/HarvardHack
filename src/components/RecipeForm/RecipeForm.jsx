@@ -18,6 +18,10 @@ function RecipeForm() {
   const [image, setImage] = useState(null);  // For handling the image file
   const [imageUrl, setImageUrl] = useState('');  // For storing the image URL
 
+  // New state for nutrients
+  const [calories, setCalories] = useState(''); // Calories
+  const [protein, setProtein] = useState(''); // Protein
+
   const navigate = useNavigate();
 
   // Handle form submission
@@ -31,7 +35,7 @@ function RecipeForm() {
       const downloadURL = await getDownloadURL(imageRef);
       setImageUrl(downloadURL); // Set the image URL after uploading
 
-      // Now prepare the recipe data with the image URL
+      // Prepare the recipe data, including nutrients
       const newRecipe = {
         title: title,
         cuisineType: cuisineType,
@@ -41,30 +45,36 @@ function RecipeForm() {
         ingredients: ingredients,
         steps: steps,
         imageUrl: downloadURL,  // Add the image URL here
+        nutrients: {
+          calories: parseFloat(calories), // Save the calories as a float
+          protein: parseFloat(protein), // Save the protein as a float
+        },
       };
 
       try {
         // Add the new recipe to the "recipes" collection in Firestore
         const docRef = await addDoc(collection(db, 'recipes'), newRecipe);
         console.log('Recipe added successfully with ID: ', docRef.id);
-        
+
         // Reset the form fields (optional)
         setTitle('');
-        setCuisineType('Chinese'); // Reset cuisine type to default 'Chinese'
+        setCuisineType('Chinese');
         setDescription('');
         setSteps([]);
         setStepInput('');
         setIngredients([]);
         setIngredientInput('');
-        setDifficulty('easy'); // Reset difficulty to default 'easy'
-        setPrice(''); // Reset price to empty
+        setDifficulty('easy');
+        setPrice('');
+        setCalories('');  // Reset calories
+        setProtein('');  // Reset protein
         setImage(null);
         setImageUrl('');
 
-        // After adding the recipe, redirect to the homepage
+        // Redirect the user to the homepage
         alert("Recipe added successfully!");
-        navigate('/');  // Redirect the user to the homepage
-        
+        navigate('/');
+
       } catch (error) {
         console.error('Error adding recipe: ', error);
         alert('Failed to add the recipe. Please try again.');
@@ -112,7 +122,7 @@ function RecipeForm() {
           />
         </label>
 
-        {/* Cuisine Type - Dropdown */}
+        {/* Cuisine Type */}
         <label>
           Cuisine Type:
           <select
@@ -128,12 +138,12 @@ function RecipeForm() {
             <option value="American">American</option>
             <option value="Mexican">Mexican</option>
             <option value="Taiwanese">Taiwanese</option>
-            <option value="Taiwanese">Indian</option>
-            <option value="Taiwanese">African</option>
+            <option value="Indian">Indian</option>
+            <option value="African">African</option>
           </select>
         </label>
 
-        {/* Difficulty - Dropdown */}
+        {/* Difficulty */}
         <label>
           Difficulty:
           <select
@@ -159,6 +169,30 @@ function RecipeForm() {
           />
         </label>
 
+        {/* Calories Input */}
+        <label>
+          Calories:
+          <input
+            type="number"
+            value={calories}
+            onChange={(e) => setCalories(e.target.value)}
+            placeholder="Enter calories"
+            required
+          />
+        </label>
+
+        {/* Protein Input */}
+        <label>
+          Protein (g):
+          <input
+            type="number"
+            value={protein}
+            onChange={(e) => setProtein(e.target.value)}
+            placeholder="Enter protein (in grams)"
+            required
+          />
+        </label>
+
         {/* Description */}
         <label>
           Description:
@@ -169,7 +203,7 @@ function RecipeForm() {
           />
         </label>
 
-        {/* Steps Input */}
+        {/* Steps */}
         <label>
           Steps:
           <div className="step-input">
@@ -190,7 +224,7 @@ function RecipeForm() {
           </ul>
         </label>
 
-        {/* Ingredients Input */}
+        {/* Ingredients */}
         <label>
           Ingredients:
           <div className="ingredient-input">

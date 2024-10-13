@@ -8,6 +8,7 @@ import Cart from './components/Cart/Cart';
 import RecipeDetail from './components/RecipeDetail/RecipeDetail';
 import AuthPage from './components/Login/Login'; // The login/signup component
 import Rewards from './components/Rewards/Rewards'; // Import the Rewards component
+import EditRecipeForm from './components/RecipeForm/EditRecipeForm'; // Import the EditRecipeForm component
 import { CartProvider } from './components/Cart/CartContext'; // Ensure the CartProvider is imported
 
 function App() {
@@ -37,7 +38,8 @@ function App() {
           <Route path="/cart" element={user ? <Cart /> : <Navigate to="/auth" />} />
           <Route path="/recipe-form" element={user ? <RecipeForm /> : <Navigate to="/auth" />} />
           <Route path="/recipe/:id" element={user ? <RecipeDetail /> : <Navigate to="/auth" />} />
-          <Route path="/rewards" element={user ? <Rewards /> : <Navigate to="/auth" />} /> {/* Add new route for rewards */}
+          <Route path="/rewards" element={user ? <Rewards /> : <Navigate to="/auth" />} />
+          <Route path="/edit-recipe/:id" element={user ? <EditRecipeForm /> : <Navigate to="/auth" />} /> {/* Add route for EditRecipeForm */}
           <Route path="/auth" element={<AuthPage />} />
         </Routes>
       </CartProvider>

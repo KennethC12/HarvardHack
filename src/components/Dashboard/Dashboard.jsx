@@ -38,10 +38,19 @@ function Dashboard() {
       try {
         const querySnapshot = await getDocs(collection(db, 'recipes'));
         const fetchedRecipes = querySnapshot.docs
-          .map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }))
+          .map((doc) => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              title: data.title,
+              imageUrl: data.imageUrl,
+              cuisineType: data.cuisineType,
+              price: data.price,
+              difficulty: data.difficulty,
+              calories: data.nutrients?.calories || 0, // Extract calories from nutrients field
+              protein: data.nutrients?.protein || 0,   // Extract protein from nutrients field
+            };
+          })
           .filter((recipe) => recipe.title && recipe.imageUrl); // Filter out empty recipes
         setRecipes(fetchedRecipes);
         setLoading(false);
@@ -229,6 +238,8 @@ function Dashboard() {
                       cuisineType={recipe.cuisineType}
                       price={recipe.price || 0}
                       difficulty={recipe.difficulty || 'Unknown'}
+                      calories={recipe.calories} // Pass calories
+                      protein={recipe.protein}   // Pass protein
                     />
                   ))}
                 </div>
@@ -249,6 +260,8 @@ function Dashboard() {
                         cuisineType={recipe.cuisineType}
                         price={recipe.price || 0}
                         difficulty={recipe.difficulty || 'Unknown'}
+                        calories={recipe.calories} // Pass calories
+                        protein={recipe.protein}   // Pass protein
                       />
                     ))}
                   </div>
@@ -271,6 +284,8 @@ function Dashboard() {
                     cuisineType={recipe.cuisineType}
                     price={recipe.price || 0}
                     difficulty={recipe.difficulty || 'Unknown'}
+                    calories={recipe.calories} // Pass calories
+                    protein={recipe.protein}   // Pass protein
                   />
                 ))}
               </div>
