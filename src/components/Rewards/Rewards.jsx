@@ -46,7 +46,6 @@ const Rewards = () => {
         ...doc.data(),
       }));
 
-      console.log("Fetched orders:", userOrders); // Debugging output
       setOrders(userOrders);
     } catch (error) {
       console.error('Error fetching orders:', error);
@@ -70,7 +69,8 @@ const Rewards = () => {
   // Function to calculate coins based on difficulty
   const calculateCoins = (difficulty) => {
     let coinsEarned = 0;
-    switch (difficulty) {
+    const formattedDifficulty = difficulty ? difficulty.toLowerCase() : 'easy'; // Fallback to easy if difficulty is missing
+    switch (formattedDifficulty) {
       case 'easy':
         coinsEarned = 5;
         break;
@@ -83,7 +83,7 @@ const Rewards = () => {
       default:
         coinsEarned = 0; // Fallback in case difficulty isn't provided
     }
-    console.log(`Difficulty: ${difficulty}, Coins Earned: ${coinsEarned}`); // Debugging log
+    console.log(`Calculated Coins for difficulty "${formattedDifficulty}": ${coinsEarned}`);
     return coinsEarned;
   };
 
@@ -96,91 +96,94 @@ const Rewards = () => {
     }));
   };
 
-  // Handle image upload for each order and give coins based on the difficulty
-  const handleImageUpload = async (orderId, item) => {
-    const imageFile = imageUploads[orderId];
-    if (!imageFile) {
-      alert('Please select an image.');
-      return;
-    }
+  // Handle image upload for each order and give coins based on the difficulty from the order database
+  // Handle image upload for each order and give coins based on the difficulty from the order database
+const handleImageUpload = async (orderId) => {
+  const imageFile = imageUploads[orderId];
+  if (!imageFile) {
+    alert('Please select an image.');
+    return;
+  }
 
-    setUploading((prevState) => ({
-      ...prevState,
-      [orderId]: true, // Set the specific order's uploading state to true
-    }));
+  setUploading((prevState) => ({
+    ...prevState,
+    [orderId]: true, // Set the specific order's uploading state to true
+  }));
 
-    const storageRef = ref(storage, `orders/${userId}/${orderId}/${imageFile.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+  const storageRef = ref(storage, `orders/${userId}/${orderId}/${imageFile.name}`);
+  const uploadTask = uploadBytesResumable(storageRef, imageFile);
 
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(`Upload is ${progress}% done`);
-      },
-      (error) => {
-        console.error('Upload failed:', error);
-        setUploading((prevState) => ({
-          ...prevState,
-          [orderId]: false, // Stop uploading state
-        }));
-      },
-      async () => {
-        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        console.log('File available at', downloadURL);
-        setUploading((prevState) => ({
-          ...prevState,
-          [orderId]: false, // Stop uploading state
-        }));
+  uploadTask.on(
+    'state_changed',
+    (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log(`Upload is ${progress}% done`);
+    },
+    (error) => {
+      console.error('Upload failed:', error);
+      setUploading((prevState) => ({
+        ...prevState,
+        [orderId]: false, // Stop uploading state
+      }));
+    },
+    async () => {
+      const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+      console.log('File available at', downloadURL);
+      setUploading((prevState) => ({
+        ...prevState,
+        [orderId]: false, // Stop uploading state
+      }));
 
-        const orderDocRef = doc(db, 'userInfo', userId, 'orders', orderId);
-        const orderSnapshot = await getDoc(orderDocRef);
+      // Retrieve the order document from Firestore
+      const orderDocRef = doc(db, 'userInfo', userId, 'orders', orderId);
+      const orderSnapshot = await getDoc(orderDocRef);
 
-        if (orderSnapshot.exists()) {
-          const orderData = orderSnapshot.data();
-          const difficulty = orderData.difficulty || 'easy';
+      if (orderSnapshot.exists()) {
+        const orderData = orderSnapshot.data();
+        const difficulty = orderData.items[0].difficulty || 'easy'; // Ensure the correct difficulty is retrieved from the order data
 
-          // Calculate coins based on the order's difficulty
-          const coinsEarned = calculateCoins(difficulty);
+        // Calculate coins based on the order's difficulty
+        const coinsEarned = calculateCoins(difficulty);
 
-          // Fetch latest coin balance from Firestore before updating
-          const userDocRef = doc(db, 'userInfo', userId);
-          const userSnapshot = await getDoc(userDocRef);
-          const currentCoins = userSnapshot.exists() ? userSnapshot.data().coins || 0 : 0;
+        // Fetch the latest coin balance from Firestore before updating
+        const userDocRef = doc(db, 'userInfo', userId);
+        const userSnapshot = await getDoc(userDocRef);
+        const currentCoins = userSnapshot.exists() ? userSnapshot.data().coins || 0 : 0;
 
-          console.log(`Current coins: ${currentCoins}, Coins earned: ${coinsEarned}`);
+        console.log(`Current coins: ${currentCoins}, Coins earned: ${coinsEarned}`);
 
-          if (coinsEarned > 0) {
-            // Update Firestore to add the earned coins and mark the order as submitted
-            const updatedCoins = currentCoins + coinsEarned;
-            await updateDoc(userDocRef, {
-              coins: updatedCoins, // Update with new total coins
-            });
+        if (coinsEarned > 0) {
+          // Update Firestore to add the earned coins and mark the order as submitted
+          const updatedCoins = currentCoins + coinsEarned;
+          await updateDoc(userDocRef, {
+            coins: updatedCoins, // Update with new total coins
+          });
 
-            // Mark the order as submitted in Firestore
-            await updateDoc(orderDocRef, {
-              submitted: true, // Update submitted status in Firestore
-            });
+          // Mark the order as submitted in Firestore
+          await updateDoc(orderDocRef, {
+            submitted: true, // Update submitted status in Firestore
+          });
 
-            // Update local coins state
-            setCoins((prevCoins) => prevCoins + coinsEarned);
+          // Update local coins state
+          setCoins((prevCoins) => prevCoins + coinsEarned);
 
-            // Mark this order as submitted locally
-            setSubmitted((prevState) => ({
-              ...prevState,
-              [orderId]: true,
-            }));
+          // Mark this order as submitted locally
+          setSubmitted((prevState) => ({
+            ...prevState,
+            [orderId]: true,
+          }));
 
-            alert(`Upload successful! You've earned ${coinsEarned} coins.`);
-          } else {
-            alert('Upload successful, but no coins earned due to invalid difficulty.');
-          }
+          alert(`Upload successful! You've earned ${coinsEarned} coins.`);
         } else {
-          console.error('Order document not found.');
+          alert('Upload successful, but no coins earned due to invalid difficulty.');
         }
+      } else {
+        console.error('Order document not found.');
       }
-    );
-  };
+    }
+  );
+};
+
 
   // Handle redeeming gift cards
   const redeemGiftCard = async (cost) => {
