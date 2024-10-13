@@ -30,7 +30,7 @@ function App() {
   }
 
   return (
-    <Router>
+    <Router basename="/HarvardHack">
       <CartProvider>
         <Routes>
           <Route path="/" element={user ? <Dashboard /> : <Navigate to="/auth" />} />
