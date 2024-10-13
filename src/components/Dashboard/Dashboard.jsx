@@ -29,6 +29,20 @@ function Dashboard() {
 
   const navigate = useNavigate();
 
+  // List of cuisines
+  const cuisines = [
+    { name: 'Mexican', icon: '🌮' },
+    { name: 'Chinese', icon: '🥡' },
+    { name: 'Soul', icon: '🍗' },
+    { name: 'Korean', icon: '🍲' },
+    { name: 'Vietnamese', icon: '🍜' },
+    { name: 'American', icon: '🌭' },
+    { name: 'Japanese', icon: '🍙' },
+    { name: 'Taiwanese', icon: '🍱' },
+    { name: 'Indian', icon: '🥘' },
+    { name: 'African', icon: '🍛' },
+  ];
+
   // Fetch recipes from Firestore
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -37,7 +51,8 @@ function Dashboard() {
         const fetchedRecipes = querySnapshot.docs
           .map((doc) => ({
             id: doc.id,
-            ...doc.data(), // Ensure that protein and calories are part of the data
+            ...doc.data(),
+            nutrients: doc.data().nutrients || {}, // Ensure nutrients field exists
           }))
           .filter((recipe) => recipe.title && recipe.imageUrl);
         setRecipes(fetchedRecipes);
@@ -65,6 +80,26 @@ function Dashboard() {
       console.error('Error signing out:', error);
     }
   };
+
+  // Randomly select "Cuisine of the Day" and set a 24-hour timer
+  useEffect(() => {
+    const randomizeCuisineOfTheDay = () => {
+      const randomIndex = Math.floor(Math.random() * cuisines.length);
+      setCuisineOfTheDay(cuisines[randomIndex].name);
+      localStorage.setItem('cuisineOfTheDay', cuisines[randomIndex].name);
+      localStorage.setItem('cuisineOfTheDayTimestamp', Date.now());
+    };
+
+    const storedCuisine = localStorage.getItem('cuisineOfTheDay');
+    const storedTimestamp = localStorage.getItem('cuisineOfTheDayTimestamp');
+    const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+    if (!storedCuisine || !storedTimestamp || Date.now() - storedTimestamp > oneDay) {
+      randomizeCuisineOfTheDay();
+    } else {
+      setCuisineOfTheDay(storedCuisine);
+    }
+  }, [cuisines]);
 
   // Filter recipes based on search term and cuisine selection
   const filteredRecipes = recipes.filter((recipe) =>
@@ -111,35 +146,6 @@ function Dashboard() {
       });
     }
   }, [center, groceryStores]);
-
-  // Cuisine buttons data
-  const cuisines = [
-    { name: 'Mexican', icon: '🌮' },
-    { name: 'Chinese', icon: '🥡' },
-    { name: 'Soul', icon: '🍗' },
-    { name: 'Korean', icon: '🍲' },
-    { name: 'Vietnamese', icon: '🍜' },
-    { name: 'American', icon: '🌭' },
-    { name: 'Japanese', icon: '🍙' },
-    { name: 'Taiwanese', icon: '🍱' },
-    { name: 'Indian', icon: '🥘' },
-    { name: 'African', icon: '🍛' },
-  ];
-
-  // Update the "Cuisine of the Day" every 24 hours
-  useEffect(() => {
-    if (cuisines.length > 0) {
-      const changeCuisineOfTheDay = () => {
-        const randomCuisine = cuisines[Math.floor(Math.random() * cuisines.length)];
-        setCuisineOfTheDay(randomCuisine.name);
-      };
-
-      changeCuisineOfTheDay(); // Set initial cuisine
-      const interval = setInterval(changeCuisineOfTheDay, 86400000); // Update every 24 hours
-
-      return () => clearInterval(interval); // Clear interval on component unmount
-    }
-  }, [cuisines]);
 
   return (
     <div className="dashboard-header-container">
@@ -196,37 +202,26 @@ function Dashboard() {
               {randomRecipes.map((recipe) => (
                 <RecipeCard
                   key={recipe.id}
-                  id={recipe.id}
-                  title={recipe.title}
-                  imageUrl={recipe.imageUrl}
-                  cuisineType={recipe.cuisineType}
-                  price={recipe.price || 0}
-                  difficulty={recipe.difficulty || 'Unknown'}
-                  protein={recipe.protein || 'Unknown'} // Display protein
-                  calories={recipe.calories || 'Unknown'} // Display calories
+                  {...recipe}
+                  calories={recipe.nutrients.calories || 'Unknown'}
+                  protein={recipe.nutrients.protein || 'Unknown'}
                 />
               ))}
             </div>
           </div>
 
-          <hr className="divider-line" />
-
-          <div className="cuisine-section">
+          {/* Display Cuisine of the Day */}
+          <div className="cuisine-of-the-day-section">
             <h2>Cuisine of the Day: {cuisineOfTheDay}</h2>
             <div className="card-grid">
               {recipes
-                .filter((recipe) => recipe.cuisineType === cuisineOfTheDay)
+                .filter((recipe) => recipe.cuisineType.toLowerCase() === cuisineOfTheDay.toLowerCase())
                 .map((recipe) => (
                   <RecipeCard
                     key={recipe.id}
-                    id={recipe.id}
-                    title={recipe.title}
-                    imageUrl={recipe.imageUrl}
-                    cuisineType={recipe.cuisineType}
-                    price={recipe.price || 0}
-                    difficulty={recipe.difficulty || 'Unknown'}
-                    protein={recipe.protein || 'Unknown'}
-                    calories={recipe.calories || 'Unknown'}
+                    {...recipe}
+                    calories={recipe.nutrients.calories || 'Unknown'}
+                    protein={recipe.nutrients.protein || 'Unknown'}
                   />
                 ))}
             </div>
@@ -243,14 +238,9 @@ function Dashboard() {
             {filteredRecipes.map((recipe) => (
               <RecipeCard
                 key={recipe.id}
-                id={recipe.id}
-                title={recipe.title}
-                imageUrl={recipe.imageUrl}
-                cuisineType={recipe.cuisineType}
-                price={recipe.price || 0}
-                difficulty={recipe.difficulty || 'Unknown'}
-                protein={recipe.protein || 'Unknown'}
-                calories={recipe.calories || 'Unknown'}
+                {...recipe}
+                calories={recipe.nutrients.calories || 'Unknown'}
+                protein={recipe.nutrients.protein || 'Unknown'}
               />
             ))}
           </div>
