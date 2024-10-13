@@ -12,7 +12,7 @@
 /* Form title */
 .recipe-form h2 {
   text-align: center;
-  color: #4caf50;
+  color: black;
   font-size: 28px;
   font-weight: 600;
   margin-bottom: 20px;
@@ -51,7 +51,7 @@
 .recipe-form button {
   width: 100%;
   padding: 12px;
-  background-color: #4caf50;
+  background-color: black;
   color: white;
   border: none;
   border-radius: 8px;

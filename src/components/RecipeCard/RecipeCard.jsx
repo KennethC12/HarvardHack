@@ -54,7 +54,7 @@ function RecipeCard({ id, title, imageUrl, cuisineType, price = 0, difficulty, c
         <button className="add-to-cart-button" onClick={handleAddToCart}>
           <FontAwesomeIcon icon={faShoppingCart} /> {/* Cart icon */}
         </button>
-        <button className="buy-now-button">Buy Now</button>
+        <button className="buy-now-button">Buy</button>
       </div>
     </div>
   );

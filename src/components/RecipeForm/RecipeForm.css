@@ -1,20 +1,28 @@
+/* Recipe Form Styling */
 .recipe-form {
   width: 400px;
   margin: 0 auto;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 10px;
-  background-color: #f9f9f9;
+  background-color: #f9f9f9; /* Neutral background for the form */
 }
 
+/* Gradient background box around the "Add a New Recipe" heading */
 .recipe-form h2 {
   text-align: center;
   margin-bottom: 20px;
+  padding: 10px;
+  background: linear-gradient(90deg, #fff7ad, #ffa9f9, #86bdfd); /* Gradient background */
+  color: #000; /* Black text for better contrast */
+  border-radius: 10px; /* Rounded corners for the heading box */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Slight shadow around the heading */
 }
 
 .recipe-form label {
   display: block;
   margin-bottom: 10px;
+  color: #000; /* Black text for labels */
 }
 
 .recipe-form input,
@@ -44,16 +52,21 @@
   border-bottom: 1px solid #ccc;
 }
 
-.recipe-form button {
+/* Button Styling */
+.recipe-form button,
+.recipe-form .add-step-button,
+.recipe-form .add-ingredient-button {
   width: 100%;
   padding: 10px;
-  background-color: #28a745;
+  background-color: #000; /* Black buttons */
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.recipe-form button:hover {
-  background-color: #218838;
+.recipe-form button:hover,
+.recipe-form .add-step-button:hover,
+.recipe-form .add-ingredient-button:hover {
+  background-color: #333; /* Darker black on hover */
 }

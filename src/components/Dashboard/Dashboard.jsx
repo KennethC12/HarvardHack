@@ -4,54 +4,42 @@ import RecipeCard from '../RecipeCard/RecipeCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faPlus, faSignOutAlt, faCoins } from '@fortawesome/free-solid-svg-icons';
 import './Dashboard.css';
-import { auth, db } from '../../firebase-config'; // Firestore instance and auth
-import { signOut } from 'firebase/auth'; // Import signOut from Firebase
-import { collection, getDocs } from 'firebase/firestore'; // Firestore functions
-import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api'; // Import Google Maps components
+import { auth, db } from '../../firebase-config';
+import { signOut } from 'firebase/auth';
+import { collection, getDocs } from 'firebase/firestore';
+import { Loader } from '@googlemaps/js-api-loader'; // Google Maps Loader
 
 function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [cuisineOfTheDay, setCuisineOfTheDay] = useState(''); // Store the current cuisine of the day
-  const [selectedCuisine, setSelectedCuisine] = useState(''); // Store the selected cuisine for filtering
+  const [cuisineOfTheDay, setCuisineOfTheDay] = useState('');
+  const [selectedCuisine, setSelectedCuisine] = useState('');
   const [groceryStores, setGroceryStores] = useState([]);
-  const [map, setMap] = useState(null); // Add map state
-  const radius = 8046.72; // 5 miles in meters
-  const navigate = useNavigate();
-
   const mapContainerStyle = {
     width: '100%',
     height: '500px',
     marginTop: '20px',
   };
 
-  // Memoize the 'center' object using useMemo
   const center = useMemo(() => ({
-    lat: 42.3770,  // Harvard University latitude
-    lng: -71.1167, // Harvard University longitude
-  }), []); // Empty dependency array because the center doesn't change
+    lat: 42.3770,
+    lng: -71.1167,
+  }), []);
 
-  // Fetch recipes from Firestore on component mount
+  const navigate = useNavigate();
+
+  // Fetch recipes from Firestore
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, 'recipes'));
         const fetchedRecipes = querySnapshot.docs
-          .map((doc) => {
-            const data = doc.data();
-            return {
-              id: doc.id,
-              title: data.title,
-              imageUrl: data.imageUrl,
-              cuisineType: data.cuisineType,
-              price: data.price,
-              difficulty: data.difficulty,
-              calories: data.nutrients?.calories || 0, // Extract calories from nutrients field
-              protein: data.nutrients?.protein || 0,   // Extract protein from nutrients field
-            };
-          })
-          .filter((recipe) => recipe.title && recipe.imageUrl); // Filter out empty recipes
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(), // Ensure that protein and calories are part of the data
+          }))
+          .filter((recipe) => recipe.title && recipe.imageUrl);
         setRecipes(fetchedRecipes);
         setLoading(false);
       } catch (error) {
@@ -65,7 +53,6 @@ function Dashboard() {
 
   // Handle cuisine selection
   const handleCuisineSelect = (cuisine) => {
-    console.log('Selected Cuisine:', cuisine); // Debugging log
     setSelectedCuisine(cuisine);
   };
 
@@ -73,65 +60,57 @@ function Dashboard() {
   const handleSignOut = async () => {
     try {
       await signOut(auth);
-      navigate('/auth'); // Redirect to the login/signup page after sign-out
+      navigate('/auth');
     } catch (error) {
       console.error('Error signing out:', error);
     }
   };
 
-  // Group the recipes by cuisine type
-  const groupByCuisineType = (recipes) => {
-    return recipes.reduce((groups, recipe) => {
-      const cuisine = recipe.cuisineType;
-      if (!groups[cuisine]) {
-        groups[cuisine] = [];
-      }
-      groups[cuisine].push(recipe);
-      return groups;
-    }, {});
-  };
-
-  // Filter the recipes based on the search term and selected cuisine
+  // Filter recipes based on search term and cuisine selection
   const filteredRecipes = recipes.filter((recipe) =>
     recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
     (!selectedCuisine || recipe.cuisineType.toLowerCase() === selectedCuisine.toLowerCase())
   );
 
+  const randomRecipes = filteredRecipes.slice(0, 6);
+
+  // Google Maps API integration for grocery stores
   useEffect(() => {
-    console.log('Filtered Recipes:', filteredRecipes); // Debugging log
-  }, [filteredRecipes]);
+    if (!groceryStores.length) {
+      const loader = new Loader({
+        apiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
+        version: 'beta',
+        libraries: ['places'],
+      });
 
-  // Group the filtered recipes by cuisine type
-  const groupedRecipes = groupByCuisineType(filteredRecipes);
+      loader.load().then((google) => {
+        const map = new google.maps.Map(document.getElementById('map'), {
+          center: center,
+          zoom: 12,
+        });
 
-  // Randomize the filtered recipes
-  const getRandomRecipes = (recipes, num) => {
-    const shuffled = [...recipes].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, num); // Return the number of random recipes
-  };
+        const service = new google.maps.places.PlacesService(map);
+        const request = {
+          location: center,
+          radius: 8046.72, // 5 miles
+          type: ['grocery_or_supermarket'],
+        };
 
-  const randomRecipes = getRandomRecipes(filteredRecipes, 6); // Randomly choose 6 recipes
-
-  // Update the "Cuisine of the Day" every 24 hours
-  useEffect(() => {
-    if (Object.keys(groupedRecipes).length > 0) {
-      const cuisines = Object.keys(groupedRecipes);
-      const changeCuisine = () => {
-        const randomCuisine = cuisines[Math.floor(Math.random() * cuisines.length)];
-        setCuisineOfTheDay(randomCuisine);
-      };
-
-      changeCuisine(); // Set the initial cuisine
-      const interval = setInterval(changeCuisine, 86400000); // Change every 24 hours
-
-      return () => clearInterval(interval); // Clean up interval on component unmount
+        service.nearbySearch(request, (results, status) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            setGroceryStores(results);
+            results.forEach((store) => {
+              new google.maps.Marker({
+                position: store.geometry.location,
+                map: map,
+                title: store.name,
+              });
+            });
+          }
+        });
+      });
     }
-  }, [groupedRecipes]);
-
-  // Handle reset to main dashboard
-  const handleReset = () => {
-    setSelectedCuisine(''); // Clear the selected cuisine
-  };
+  }, [center, groceryStores]);
 
   // Cuisine buttons data
   const cuisines = [
@@ -147,38 +126,28 @@ function Dashboard() {
     { name: 'African', icon: '🍛' },
   ];
 
-  // Google Maps API integration to find grocery stores
+  // Update the "Cuisine of the Day" every 24 hours
   useEffect(() => {
-    if (map) {
-      const service = new window.google.maps.places.PlacesService(map);
-      const request = {
-        location: center,  // Use memoized center
-        radius: radius, // 5 miles radius
-        type: ['grocery_or_supermarket'], // Grocery stores
+    if (cuisines.length > 0) {
+      const changeCuisineOfTheDay = () => {
+        const randomCuisine = cuisines[Math.floor(Math.random() * cuisines.length)];
+        setCuisineOfTheDay(randomCuisine.name);
       };
 
-      service.nearbySearch(request, (results, status) => {
-        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-          setGroceryStores(results);
-        }
-      });
-    }
-  }, [map, radius, center]); // Include center in the dependency array
+      changeCuisineOfTheDay(); // Set initial cuisine
+      const interval = setInterval(changeCuisineOfTheDay, 86400000); // Update every 24 hours
 
-  // On map load, set map instance
-  const onMapLoad = (mapInstance) => {
-    setMap(mapInstance);
-  };
+      return () => clearInterval(interval); // Clear interval on component unmount
+    }
+  }, [cuisines]);
 
   return (
     <div className="dashboard-header-container">
       <div className="dashboard-header">
         <div className="dashboard-combined">
-          {/* Wrap the h1 title in a Link, reset cuisine when clicked */}
-          <Link to="/" className="title-button" onClick={handleReset}>
+          <Link to="/" className="title-button" onClick={() => setSelectedCuisine('')}>
             <h1>re$ipe</h1>
           </Link>
-  
           <div className="search-bar">
             <input
               type="text"
@@ -187,7 +156,6 @@ function Dashboard() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-  
           <div className="icon-group">
             <Link to="/rewards" className="coins-button">
               <FontAwesomeIcon icon={faCoins} />
@@ -204,7 +172,7 @@ function Dashboard() {
           </div>
         </div>
       </div>
-  
+
       <div className="cuisine-button-group">
         {cuisines.map((cuisine) => (
           <button
@@ -217,65 +185,38 @@ function Dashboard() {
           </button>
         ))}
       </div>
-  
+
       <hr className="divider-line" />
-  
-      {loading ? (
-        <p>Loading recipes...</p>
-      ) : (
+
+      {!selectedCuisine && (
         <>
-          {!selectedCuisine && (
-            <>
-              <div className="cuisine-section">
-                <h2>Recommended</h2>
-                <div className="card-grid">
-                  {randomRecipes.map((recipe) => (
-                    <RecipeCard
-                      key={recipe.id}
-                      id={recipe.id}
-                      title={recipe.title}
-                      imageUrl={recipe.imageUrl}
-                      cuisineType={recipe.cuisineType}
-                      price={recipe.price || 0}
-                      difficulty={recipe.difficulty || 'Unknown'}
-                      calories={recipe.calories} // Pass calories
-                      protein={recipe.protein}   // Pass protein
-                    />
-                  ))}
-                </div>
-              </div>
-  
-              <hr className="divider-line" />
-  
-              {cuisineOfTheDay && groupedRecipes[cuisineOfTheDay] && (
-                <div className="cuisine-section">
-                  <h2>Cuisine of the Day: {cuisineOfTheDay}</h2>
-                  <div className="card-grid">
-                    {groupedRecipes[cuisineOfTheDay].map((recipe) => (
-                      <RecipeCard
-                        key={recipe.id}
-                        id={recipe.id}
-                        title={recipe.title}
-                        imageUrl={recipe.imageUrl}
-                        cuisineType={recipe.cuisineType}
-                        price={recipe.price || 0}
-                        difficulty={recipe.difficulty || 'Unknown'}
-                        calories={recipe.calories} // Pass calories
-                        protein={recipe.protein}   // Pass protein
-                      />
-                    ))}
-                  </div>
-                  <hr className="divider-line" />
-                </div>
-              )}
-            </>
-          )}
-  
-          {selectedCuisine && groupedRecipes[selectedCuisine] && (
-            <div className="cuisine-section">
-              <h2>{selectedCuisine} Recipes</h2>
-              <div className="card-grid">
-                {groupedRecipes[selectedCuisine].map((recipe) => (
+          <div className="cuisine-section">
+            <h2>Recommended:</h2>
+            <div className="card-grid">
+              {randomRecipes.map((recipe) => (
+                <RecipeCard
+                  key={recipe.id}
+                  id={recipe.id}
+                  title={recipe.title}
+                  imageUrl={recipe.imageUrl}
+                  cuisineType={recipe.cuisineType}
+                  price={recipe.price || 0}
+                  difficulty={recipe.difficulty || 'Unknown'}
+                  protein={recipe.protein || 'Unknown'} // Display protein
+                  calories={recipe.calories || 'Unknown'} // Display calories
+                />
+              ))}
+            </div>
+          </div>
+
+          <hr className="divider-line" />
+
+          <div className="cuisine-section">
+            <h2>Cuisine of the Day: {cuisineOfTheDay}</h2>
+            <div className="card-grid">
+              {recipes
+                .filter((recipe) => recipe.cuisineType === cuisineOfTheDay)
+                .map((recipe) => (
                   <RecipeCard
                     key={recipe.id}
                     id={recipe.id}
@@ -284,42 +225,39 @@ function Dashboard() {
                     cuisineType={recipe.cuisineType}
                     price={recipe.price || 0}
                     difficulty={recipe.difficulty || 'Unknown'}
-                    calories={recipe.calories} // Pass calories
-                    protein={recipe.protein}   // Pass protein
+                    protein={recipe.protein || 'Unknown'}
+                    calories={recipe.calories || 'Unknown'}
                   />
                 ))}
-              </div>
             </div>
-          )}
-  
-          <LoadScript googleMapsApiKey={process.env.REACT_APP_GOOGLE_MAPS_API_KEY} libraries={['places']}>
-            <GoogleMap
-              id="grocery-map"
-              mapContainerStyle={mapContainerStyle}
-              center={center} // Use memoized center
-              zoom={12}
-              onLoad={onMapLoad}
-            >
-              {groceryStores.map((store) => (
-                <Marker
-                  key={store.place_id}
-                  position={{
-                    lat: store.geometry.location.lat(),
-                    lng: store.geometry.location.lng(),
-                  }}
-                  icon={{
-                    url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                    scaledSize: new window.google.maps.Size(40, 40),
-                  }}
-                  title={store.name}
-                />
-              ))}
-            </GoogleMap>
-          </LoadScript>
+          </div>
+
+          <div id="map" style={mapContainerStyle}></div>
         </>
       )}
+
+      {selectedCuisine && (
+        <div className="cuisine-section">
+          <h2>{selectedCuisine} Recipes</h2>
+          <div className="card-grid">
+            {filteredRecipes.map((recipe) => (
+              <RecipeCard
+                key={recipe.id}
+                id={recipe.id}
+                title={recipe.title}
+                imageUrl={recipe.imageUrl}
+                cuisineType={recipe.cuisineType}
+                price={recipe.price || 0}
+                difficulty={recipe.difficulty || 'Unknown'}
+                protein={recipe.protein || 'Unknown'}
+                calories={recipe.calories || 'Unknown'}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
-  );  
+  );
 }
 
 export default Dashboard;
