@@ -128,8 +128,8 @@ function RecipeForm() {
             <option value="American">American</option>
             <option value="Mexican">Mexican</option>
             <option value="Taiwanese">Taiwanese</option>
-            <option value="Taiwanese">Indian</option>
-            <option value="Taiwanese">African</option>
+            <option value="Indian">Indian</option>
+            <option value="African">African</option>
           </select>
         </label>
 
