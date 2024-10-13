@@ -11,7 +11,7 @@
 .dashboard-header h1 {
   margin: 0;
   position: absolute;
-  top: 40px; /* Increased from 20px to 40px to lower the title */
+  top: 40px;
   left: 50px;
   font-size: 48px;
 }
@@ -25,7 +25,7 @@
 /* Icon Group */
 .icon-group {
   position: absolute;
-  top: 40px; /* Increased from 20px to 40px to move icons down */
+  top: 40px;
   right: 50px;
   display: flex;
   gap: 20px;
@@ -87,13 +87,13 @@
 }
 
 .cuisine-icon {
-  font-size: 50px;
-  margin-bottom: 8px;
+  font-size: 40px; /* Reduced icon size from 50px */
+  margin-bottom: 5px;
 }
 
 .cuisine-label {
   font-weight: normal;
-  font-size: 16px;
+  font-size: 14px;
   color: #000;
 }
 
@@ -179,12 +179,12 @@ h2 {
   .dashboard-header h1 {
     font-size: 32px;
     left: 20px;
-    top: 30px; /* Adjusted for responsiveness */
+    top: 30px;
   }
 
   .search-bar {
     width: 90%;
-    margin-top: 80px; /* Adjusted as needed */
+    margin-top: 80px;
   }
 
   .search-bar input {
@@ -193,7 +193,7 @@ h2 {
   }
 
   .icon-group {
-    top: 30px; /* Adjusted for responsiveness */
+    top: 30px;
     right: 20px;
   }
 
