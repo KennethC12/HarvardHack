@@ -3,7 +3,7 @@ import { db, storage } from '../../firebase-config';
 import { doc, getDoc, updateDoc } from 'firebase/firestore'; // Firestore functions for updating
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Storage functions
 import { useNavigate, useParams } from 'react-router-dom'; // For navigation and accessing recipe ID
-import './RecipeForm.css';
+import './EditRecipeForm.css';
 
 function EditRecipeForm() {
   const [title, setTitle] = useState('');
@@ -89,6 +89,11 @@ function EditRecipeForm() {
 
   return (
     <div className="recipe-form">
+      {/* Back Button */}
+      <button className="back-buttons" onClick={() => navigate(-1)}>
+        ←
+      </button>
+
       <h2>Edit Recipe</h2>
       <form onSubmit={handleSubmit}>
         {/* Title */}
