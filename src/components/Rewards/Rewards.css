@@ -2,7 +2,7 @@
 :root {
     --primary-color: #4caf50;
     --secondary-color: #f8f8f8;
-    --text-color: #000;
+    --text-color: #000; /* Changed to black for headings */
     --hover-color: #555;
     --disabled-color: #ccc;
     --shadow-color: rgba(0, 0, 0, 0.1);
@@ -18,62 +18,69 @@
     padding: 20px;
 }
 
-/* Flex container for main content */
-.content-container {
+/* Flex container for logo and title */
+.orders-title-container {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: var(--gap-size);
+    justify-content: flex-start; /* Aligns items to the left */
+    align-items: center; /* Vertically centers icon and title */
+    gap: 15px; /* Adds space between the logo and the title */
+    margin-bottom: 20px;
 }
 
 /* "Re$ipe" logo button */
 .logo-button {
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding: 10px 20px;
-    margin: 0;
-    font-size: var(--font-size-large);
-    font-weight: bold;
-    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    padding: 0; /* Remove padding to keep the logo aligned */
     background: none;
     border: none;
     cursor: pointer;
-    text-decoration: none;
 }
 
-.logo-button:hover {
-    color: var(--hover-color);
+.logo-image {
+    width: 80px; /* Increased size for the logo */
+    height: auto;
+}
+
+/* Title with gradient background */
+.orders-title, .rewards-title {
+    font-size: var(--font-size-large);
+    font-weight: bold;
+    margin: 0;
+    padding: 10px 20px;
+    background: linear-gradient(90deg, #fff7ad, #ffa9f9, #86bdfd); /* Updated gradient from homepage */
+    color: var(--text-color); /* Black text color */
+    border-radius: var(--border-radius); /* Rounds the corners */
+    display: inline-block;
+    width: 100%; /* Full width background */
+}
+
+/* Aligning rewards title to the left */
+.rewards-section {
+    text-align: left; /* Align to the left */
+    margin-left: 20px; /* Adding some margin for spacing */
 }
 
 /* Orders section */
 .orders-box-container {
     flex-grow: 1;
     margin-top: 1.25rem;
-    overflow-x: hidden; /* Prevents horizontal overflow */
-}
-
-.orders-title {
-    font-size: var(--font-size-large);
-    font-weight: bold;
-    margin-bottom: 10px;
-    text-align: center;
+    overflow-x: hidden;
 }
 
 .orders-box {
     display: flex;
-    flex-wrap: wrap; /* Allows items to wrap if there's not enough space */
+    flex-wrap: wrap;
     justify-content: center;
     gap: var(--gap-size);
     padding: 1.25rem;
     margin-bottom: 2.5rem;
     max-height: 450px;
-    overflow-y: auto; /* Allows vertical scrolling if necessary */
+    overflow-y: auto;
     background-color: var(--secondary-color);
     border-radius: var(--border-radius);
     box-shadow: 0 2px 8px var(--shadow-color);
 }
-
 
 .orders-list {
     display: flex;
@@ -85,9 +92,9 @@
 
 .order-item {
     flex-shrink: 0;
-    flex-basis: calc(25% - var(--gap-size)); /* Adjust the width based on container size */
-    max-width: 250px; /* Set a maximum width for the cards */
-    min-width: 180px; /* Set a minimum width for smaller screens */
+    flex-basis: calc(25% - var(--gap-size));
+    max-width: 250px; /* Adjust size as per screen size */
+    min-width: 180px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -96,32 +103,6 @@
     background-color: #fff;
     border-radius: var(--border-radius);
     box-shadow: 0 1px 6px var(--shadow-color);
-}
-
-/* Order image */
-.order-image {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: var(--border-radius);
-    box-shadow: 0 1px 6px var(--shadow-color);
-}
-
-/* Order information */
-.order-info {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.order-info p {
-    margin: 5px 0;
-    font-weight: bold;
-}
-
-.order-info .difficulty {
-    margin-top: 10px;
 }
 
 /* Upload section */
@@ -133,10 +114,6 @@
     box-shadow: 0 2px 8px var(--shadow-color);
 }
 
-.upload-section input {
-    margin-bottom: 10px;
-}
-
 .upload-section button {
     padding: 10px;
     color: #fff;
@@ -146,22 +123,33 @@
     cursor: pointer;
 }
 
-.upload-section button:disabled {
-    background-color: var(--disabled-color);
-    cursor: not-allowed;
-}
-
 /* Rewards section */
 .rewards-section {
-    text-align: center;
+    text-align: left; /* Align rewards title to the left */
+    margin-left: 0px; /* Left align */
 }
 
 .rewards-title {
     font-size: var(--font-size-xlarge);
     margin-top: 40px;
+    background: linear-gradient(90deg, #fff7ad, #ffa9f9, #86bdfd); /* Updated gradient */
+    color: var(--text-color); /* Black text */
+    border-radius: var(--border-radius); /* Rounds the corners */
 }
 
-.logo-image {
-    width: 100px;
-    height: auto;
+/* Redeem button styling */
+.redeem-button {
+    background-color: #000; /* Changed to black background */
+    color: white;
+    padding: 14px 24px; /* Bigger button */
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.redeem-button:hover {
+    background-color: #333; /* Slightly lighter black on hover */
 }

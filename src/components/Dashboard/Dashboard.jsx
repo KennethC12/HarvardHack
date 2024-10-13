@@ -218,7 +218,7 @@ function Dashboard() {
           {!selectedCuisine && (
             <>
               <div className="cuisine-section">
-                <h2>Recommended</h2>
+                <h2>Recommended:</h2>
                 <div className="card-grid">
                   {randomRecipes.map((recipe) => (
                     <RecipeCard

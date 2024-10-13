@@ -4,7 +4,7 @@
 .dashboard-header {
   position: relative;
   padding: 20px 50px;
-  background-color: #f5f6fa; /* Optional background color */
+  background: linear-gradient(90deg, #fff7ad, #ffa9f9, #86bdfd); /* Updated gradient */
 }
 
 /* Title */
@@ -14,8 +14,10 @@
   top: 40px;
   left: 50px;
   font-size: 48px;
+  color: #000; /* Changed to black */
 }
 
+/* Title Button */
 .title-button {
   text-decoration: none;
   color: inherit;
@@ -25,7 +27,7 @@
 /* Icon Group */
 .icon-group {
   position: absolute;
-  top: 40px;
+  top: 40px; /* Increased from 20px to 40px to move icons down */
   right: 50px;
   display: flex;
   gap: 20px;
@@ -87,13 +89,13 @@
 }
 
 .cuisine-icon {
-  font-size: 40px; /* Reduced icon size from 50px */
-  margin-bottom: 5px;
+  font-size: 50px;
+  margin-bottom: 8px;
 }
 
 .cuisine-label {
   font-weight: normal;
-  font-size: 14px;
+  font-size: 16px;
   color: #000;
 }
 
@@ -179,12 +181,12 @@ h2 {
   .dashboard-header h1 {
     font-size: 32px;
     left: 20px;
-    top: 30px;
+    top: 30px; /* Adjusted for responsiveness */
   }
 
   .search-bar {
     width: 90%;
-    margin-top: 80px;
+    margin-top: 80px; /* Adjusted as needed */
   }
 
   .search-bar input {
@@ -193,8 +195,246 @@ h2 {
   }
 
   .icon-group {
-    top: 30px;
+    top: 30px; /* Adjusted for responsiveness */
+    right: 20px;/* Dashboard Styles */
+
+/* Dashboard Header */
+.dashboard-header {
+  position: relative;
+  padding: 20px 50px;
+  background: linear-gradient(90deg, #fff7ad, #ffa9f9, #86bdfd); /* Updated to match the gradient */
+}
+
+/* Title */
+.dashboard-header h1 {
+  margin: 0;
+  position: absolute;
+  top: 40px;
+  left: 50px;
+  font-size: 48px;
+  color: #000; /* Changed text to black */
+}
+
+/* Other existing styles remain unchanged */
+
+.title-button {
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Icon Group */
+.icon-group {
+  position: absolute;
+  top: 40px; /* Increased from 20px to 40px to move icons down */
+  right: 50px;
+  display: flex;
+  gap: 20px;
+}
+
+.cart-icon,
+.add-button {
+  font-size: 30px;
+  text-decoration: none;
+  color: #000;
+}
+
+.cart-icon:hover,
+.add-button:hover {
+  color: #555;
+}
+
+.add-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Search Bar */
+.search-bar {
+  position: relative;
+  margin: 0 auto; /* Center horizontally */
+  margin-top: 60px; /* Decreased from 80px to 60px to move search bar up */
+  width: 400px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0px 2.2px 4.4px rgba(0, 0, 0, 0.1);
+}
+
+/* Cuisine Button Group */
+.cuisine-button-group {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.cuisine-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 15px;
+}
+
+.cuisine-icon {
+  font-size: 50px;
+  margin-bottom: 8px;
+}
+
+.cuisine-label {
+  font-weight: normal;
+  font-size: 16px;
+  color: #000;
+}
+
+.cuisine-button:hover .cuisine-label {
+  color: #555;
+}
+
+/* Card Grid */
+.card-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 21px;
+  justify-content: center;
+  padding-top: 0;
+  margin: 0 auto;
+}
+
+.card-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.card-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.card-grid::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.card-grid::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Recipe Card */
+.recipe-card {
+  min-width: 150px;
+  flex: 0 0 auto;
+  transform: scale(0.90);
+  transform-origin: center;
+}
+
+.recipe-card h3 {
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.recipe-card p {
+  margin-top: 2px;
+  text-align: center;
+}
+
+/* Headings */
+h2 {
+  margin-top: 30px;
+  margin-bottom: 0;
+  text-align: left;
+  padding-left: 50px;
+}
+
+/* Divider Line */
+.divider-line {
+  border: none;
+  border-top: 3px solid #ccc;
+  margin: 20px auto;
+  width: 85%;
+}
+
+/* Coins Button */
+.coins-button {
+  font-size: 30px;
+  text-decoration: none;
+  color: #000;
+}
+
+.coins-button:hover {
+  color: #555;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+  .dashboard-header h1 {
+    font-size: 32px;
+    left: 20px;
+    top: 30px; /* Adjusted for responsiveness */
+  }
+
+  .search-bar {
+    width: 90%;
+    margin-top: 80px; /* Adjusted as needed */
+  }
+
+  .search-bar input {
+    width: 100%;
+    max-width: none;
+  }
+
+  .icon-group {
+    top: 30px; /* Adjusted for responsiveness */
     right: 20px;
+  }
+
+  .cart-icon,
+  .add-button {
+    font-size: 24px;
+  }
+
+  .cuisine-button-group {
+    flex-wrap: wrap;
+  }
+
+  .cuisine-button {
+    flex: 1 1 30%;
+  }
+}
+
+/* Add to Cart Button */
+.add-to-cart-button {
+  background: linear-gradient(90deg, #fff7ad, #ffa9f9, #86bdfd); /* Match the gradient colors of the heading */
+  color: #000; /* Black text to contrast with the light background */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
+}
+
+.add-to-cart-button:hover {
+  background-color: #ffa9f9; /* A single pastel pink color on hover */
+  color: #000; /* Keep the text black */
+}
+
+.add-to-cart-button:active {
+  background-color: #86bdfd; /* A blue tone when pressed */
+  transform: scale(0.95); /* Slight scale effect on click */
+}
+
   }
 
   .cart-icon,

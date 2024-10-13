@@ -210,7 +210,7 @@ const Rewards = () => {
 
       {/* Title for Recent and Past Orders */}
       <div className="orders-title-container">
-        <h2 className="orders-title">Recent and Past Orders</h2>
+        <h2 className="orders-title">Past Orders</h2>
       </div>
 
       {/* Scrollable Box for Recent and Past Orders */}

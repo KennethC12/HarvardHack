@@ -129,10 +129,10 @@
 /* Button Styling */
 .order-summary button {
   padding: 12px;
-  background-color: #007bff; /* Blue background */
-  color: white; /* White text */
+  background: linear-gradient(90deg, #fff7ad, #ffa9f9, #86bdfd); /* Color gradient from the homepage */
+  color: black; /* Black text color */
   border: none;
-  border-radius: 8px; /* Rounded corners */
+  border-radius: 8px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
@@ -140,12 +140,13 @@
 }
 
 .order-summary button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+  background-color: #e0c5ff; /* Slightly lighter shade on hover (adjust as needed) */
 }
 
 .order-summary button:active {
-  background-color: #004494; /* Darker blue when pressed */
+  background-color: #c0a5e0; /* Even darker shade on active (adjust as needed) */
 }
+
 
 /* Remove Button Styles */
 .remove-button {
