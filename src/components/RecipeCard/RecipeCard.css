@@ -26,18 +26,21 @@
   font-size: 14px;
 }
 
+/* Button container with flexbox */
 .card-buttons {
   margin-top: 10px;
   display: flex;
   justify-content: space-between;
+  gap: 8px; /* Small gap between the buttons */
 }
 
 .add-to-cart-button,
 .buy-now-button {
+  flex: 1; /* Make both buttons take up equal space */
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 7px 10px;
+  padding: 7px 10px; /* Adjust the padding for button size */
   cursor: pointer;
   font-size: 14px;
   border-radius: 3px;
@@ -53,4 +56,18 @@
 
 .buy-now-button:hover {
   background-color: #218838;
+}
+
+/* Modifications for the "Add to Cart" button with icon */
+.add-to-cart-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px; /* Space between icon and text */
+}
+
+.add-to-cart-button svg {
+  font-size: 15px; /* Adjust the icon size */
+  height: 15px;
+  width: 15px;
 }

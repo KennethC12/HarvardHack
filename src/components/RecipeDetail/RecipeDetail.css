@@ -124,26 +124,46 @@
 
 /* New Div for Buy Now Button at the Bottom */
 .buy-now-container {
+  margin-top: 40px; /* Add spacing between description and Buy Now button */
   display: flex;
-  justify-content: center; /* Center the button horizontally */
-  margin-top: 20px;
-  padding-bottom: 20px;
-  margin-top: auto; /* Pushes the button to the bottom */
+  justify-content: center;
 }
 
-/* Style the Buy Now Button */
 .buy-now-button {
+  width: 90%; /* Make the button 10% smaller */
+  padding: 10px 20px;
   background-color: #28a745;
   color: white;
   border: none;
-  padding: 15px 30px;
+  border-radius: 8px;
   font-size: 18px;
-  border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .buy-now-button:hover {
-  background-color: #218838; /* Darker shade on hover */
+  background-color: #28a745;
+}
+
+
+/* Container for the difficulty bar */
+.difficulty-bar-container {
+  margin-top: 10px;
+  height: 20px;
+  width: 100%;
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* The bar itself, which changes width based on difficulty */
+.difficulty-bar {
+  height: 100%;
+  background-color: #4caf50;
+  text-align: center;
+  color: white;
+  line-height: 20px;
+  border-radius: 8px;
 }
 
 /* Responsive Design */
@@ -161,3 +181,4 @@
     margin-bottom: 20px;
   }
 }
+

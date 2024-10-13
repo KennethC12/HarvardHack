@@ -5,93 +5,196 @@
   padding: 20px;
   gap: 20px;
   height: 100vh; /* Full height of the viewport */
+  background-color: #f5f6fa; /* Soft background color for the entire page */
+  font-family: 'Roboto', sans-serif; /* Modern font for a cleaner look */
+  position: relative; /* Relative positioning for the container */
 }
 
 /* Far left column: Cart */
 .cart-box {
   width: 30%;
-  background-color: #f8f8f8;
+  background-color: #ffffff; /* Clean white background */
   padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  border-radius: 10px; /* Rounded corners */
   overflow-y: auto;
+  z-index: 10; /* Lower z-index than back-button */
 }
 
-/* Middle column: Personal info and time frame */
+/* Middle column: Personal info and delivery time frame */
 .middle-column {
   width: 35%;
   display: flex;
   flex-direction: column;
-  gap: 20px; /* Space between the personal info and delivery time frame divs */
+  gap: 20px; /* Space between the personal info and delivery time frame sections */
 }
 
-/* Personal Info (Credit Card and Personal Details) */
-.personal-info {
-  background-color: #f0f0f0;
+/* Personal Info and Delivery Time Frame Sections */
+.personal-info,
+.delivery-time-frame {
+  background-color: #ffffff;
   padding: 20px;
-  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05); /* Softer shadow */
+  border-radius: 10px;
+}
+
+/* Personal Info Dropdown */
+.personal-info-dropdown {
+  background-color: #ffffff;
+  padding: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05); /* Soft shadow */
+  border-radius: 10px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.personal-info-dropdown summary {
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.personal-info-dropdown summary:hover {
+  color: #007bff; /* Change text color on hover */
+}
+
+/* Personal Info Input Styles */
+.personal-info {
+  margin-top: 10px;
 }
 
 .personal-info label {
-  margin-bottom: 10px;
   display: block;
+  margin-bottom: 10px;
 }
 
 .personal-info input {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 15px;
+  width: 90%;
+  padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-/* Delivery Time Frame Section */
-.delivery-time-frame {
-  background-color: #f0f0f0;
-  padding: 20px;
-  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
-}
-
-.delivery-time-frame label {
-  display: block;
-  margin-bottom: 10px;
-}
-
-.delivery-time-frame select {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 4px;
 }
 
 /* Far right column: Order Summary */
 .order-summary {
   width: 20%;
-  background-color: #e0e0e0;
+  background-color: #ffffff;
   padding: 20px;
-  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center items horizontally */
+  justify-content: space-between; /* Space out items */
 }
 
 .order-summary h2 {
-  margin-bottom: 15px;
-}
-
-.order-summary p {
-  font-size: 18px;
+  text-align: left;
+  padding-left: 10px;
+  width: 100%;
   margin-bottom: 20px;
 }
 
+/* Order Details */
+.order-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 20px; /* Add padding to the left */
+}
+
+.order-details ul {
+  list-style-type: none; /* Remove bullet points */
+  padding: 0;
+  width: 100%; /* Full width */
+}
+
+.order-item {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  width: 90%; /* Full width for better alignment */
+  margin-bottom: 10px; /* Space below each item */
+}
+
+/* Order Summary Text Styling */
+.order-details p,
+.order-item p {
+  text-align: center;
+  font-size: 18px;
+  margin: 10px 0;
+}
+
+/* Button Styling */
 .order-summary button {
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
+  padding: 12px;
+  background-color: #007bff; /* Blue background */
+  color: white; /* White text */
   border: none;
-  border-radius: 5px;
+  border-radius: 8px; /* Rounded corners */
   cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition */
 }
 
 .order-summary button:hover {
-  background-color: #0056b3;
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.order-summary button:active {
+  background-color: #004494; /* Darker blue when pressed */
+}
+
+/* Remove Button Styles */
+.remove-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ff3d3d; /* Red color for delete icon */
+  display: flex;
+  align-items: center; /* Center icon vertically */
+  justify-content: center; /* Center icon horizontally */
+  font-size: 18px;
+}
+
+.remove-button:hover {
+  color: #ff0000; /* Darker red on hover */
+}
+
+/* Back Button Styling */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background-color: #808080; /* Gray color */
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+  font-weight: 500;
+  z-index: 11000; /* Higher z-index to ensure it's above everything else */
+  display: inline-block;
+}
+
+/* Active state */
+.back-button:active {
+  background-color: #505050; /* Darker gray on active */
+}
+
+/* Responsive Design Adjustments */
+@media (max-width: 600px) {
+  .cart-box,
+  .middle-column,
+  .order-summary {
+    width: 100%; /* Full width for smaller screens */
+  }
+
+  .personal-info,
+  .delivery-time-frame {
+    padding: 10px; /* Reduce padding for smaller screens */
+  }
 }

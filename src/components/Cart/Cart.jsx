@@ -4,10 +4,11 @@ import './Cart.css'; // For styling the layout
 import { auth, db } from '../../firebase-config'; // Import Firebase auth and Firestore
 import { doc, getDoc, updateDoc, collection, addDoc, setDoc } from 'firebase/firestore'; // Firestore functions
 import { useNavigate } from 'react-router-dom'; // For navigation
+import DeleteIcon from '@mui/icons-material/Delete'; // Import the Delete icon from Material UI
 
 const Cart = () => {
-  const { cartItems, removeFromCart } = useContext(CartContext);
-  const [userId, setUserId] = useState(null); // State to hold the user's ID
+  const { cartItems, removeFromCart, clearCart } = useContext(CartContext);
+  const [userId, setUserId] = useState(null);
   const [paymentInfo, setPaymentInfo] = useState({
     cardNumber: '',
     cvc: '',
@@ -18,13 +19,13 @@ const Cart = () => {
   });
   const [timeFrame, setTimeFrame] = useState('');
   const navigate = useNavigate(); // To navigate after order submission
-  const [coins, setCoins] = useState(0); // To store user's coins
+  const [coins, setCoins] = useState(0);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        setUserId(user.uid); // Get the logged-in user's ID
-        loadUserInfo(user.uid); // Load saved personal information
+        setUserId(user.uid); 
+        loadUserInfo(user.uid); 
       } else {
         setUserId(null);
       }
@@ -46,10 +47,9 @@ const Cart = () => {
         address: userData.address || '',
         zipCode: userData.zipCode || '',
       });
-      setCoins(userData.coins || 0); // Load user's existing coins from Firestore
-      setTimeFrame(userData.timeFrame || ''); // Load saved time frame
+      setCoins(userData.coins || 0); 
+      setTimeFrame(userData.timeFrame || ''); 
     } else {
-      // If the document doesn't exist, create it with default values
       await setDoc(userDocRef, {
         cardNumber: '',
         cvc: '',
@@ -58,49 +58,19 @@ const Cart = () => {
         address: '',
         zipCode: '',
         timeFrame: '',
-        coins: 0, // Initialize coins to 0 for a new user
+        coins: 0, 
       });
-      setCoins(0); // Set coins to 0 for new users
+      setCoins(0); 
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // Ensure only numbers are entered for cardNumber and cvc
     if ((name === 'cardNumber' || name === 'cvc') && !/^\d*$/.test(value)) return;
     setPaymentInfo((prevInfo) => ({
       ...prevInfo,
       [name]: value,
     }));
-  };
-
-  // Add the copyRecipeForUser function
-  const copyRecipeForUser = async (recipeId, userId) => {
-    if (!recipeId || !userId) {
-      console.error('Invalid recipeId or userId:', { recipeId, userId });
-      return;
-    }
-
-    try {
-      const recipeDocRef = doc(db, 'recipes', recipeId);
-      const recipeDoc = await getDoc(recipeDocRef);
-
-      if (recipeDoc.exists()) {
-        const recipeData = recipeDoc.data();
-
-        const userRecipeDocRef = doc(collection(db, 'userRecipes', userId));
-        await setDoc(userRecipeDocRef, {
-          ...recipeData,
-          createdAt: new Date(),
-        });
-
-        console.log('Recipe copied successfully for user:', userId);
-      } else {
-        console.error('Recipe does not exist:', recipeId);
-      }
-    } catch (error) {
-      console.error('Error copying recipe:', error);
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -116,17 +86,17 @@ const Cart = () => {
       return;
     }
 
-    const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
-    const coinReward = Math.floor(totalPrice * 0.2); // Coins earned based on 20% of the total price
+    const totalPrice = cartItems.reduce((total, item) => total + (item.price || 0), 0);
+    const coinReward = Math.floor(totalPrice * 0.2);
 
-    // Order details
     const order = {
-      userId: userId || 'N/A', // Ensure this is never undefined
+      userId: userId || 'N/A',
       items: cartItems.map((item) => ({
-        recipeId: item.id || 'N/A', // Ensure no undefined recipe IDs
+        recipeId: item.id || 'N/A',
         title: item.title || 'Untitled',
         price: item.price || 0,
         imageUrl: item.imageUrl || '',
+        difficulty: item.difficulty || 'easy',
       })),
       paymentInfo: {
         name: paymentInfo.name || '',
@@ -138,23 +108,10 @@ const Cart = () => {
       orderDate: new Date().toISOString(),
     };
 
-    console.log('Order:', order); // Debugging log to check order structure
-
     try {
-      // Copy recipes to userRecipes
-      for (const item of cartItems) {
-        if (!item.id) {
-          console.error('Cart item is missing id:', item);
-          continue; // Skip items with no id
-        }
-        await copyRecipeForUser(item.id, userId);
-      }
-
-      // Add the order to the 'orders' subcollection under 'userInfo'
       const userOrdersRef = collection(db, 'userInfo', userId, 'orders');
       await addDoc(userOrdersRef, order);
 
-      // Update the user document with payment info, time frame, and coins
       const userDocRef = doc(db, 'userInfo', userId);
       await updateDoc(userDocRef, {
         cardNumber: paymentInfo.cardNumber,
@@ -164,25 +121,36 @@ const Cart = () => {
         address: paymentInfo.address,
         zipCode: paymentInfo.zipCode,
         timeFrame: timeFrame,
-        coins: coins + coinReward, // Update the coins field with the new total coins
+        coins: coins + coinReward, 
       });
 
-      alert(`Order placed successfully! You earned ${coinReward} coins. Redirecting to dashboard...`);
-      navigate('/');
+      alert(`Order placed successfully! You earned ${coinReward} coins.`);
+      clearCart();
+      navigate('/'); 
     } catch (error) {
       console.error('Error placing order:', error);
       alert('Failed to place the order. Please try again.');
     }
   };
 
-  if (!cartItems) {
-    return <div>Error: Cart context is not available.</div>;
-  }
+  const totalPrice = cartItems.reduce((total, item) => total + (item.price || 0), 0);
 
-  const totalPrice = cartItems.reduce((total, item) => total + item.price, 0);
+  const todayTimeFrames = [
+    'Morning (8 AM - 12 PM)',
+    'Afternoon (12 PM - 4 PM)',
+    'Evening (4 PM - 8 PM)',
+  ];
+
+  const tomorrowTimeFrames = [
+    'Morning (8 AM - 12 PM)',
+    'Afternoon (12 PM - 4 PM)',
+    'Evening (4 PM - 8 PM)',
+  ];
 
   return (
     <div className="page-container">
+      <button onClick={() => navigate(-1)} className="back-button">Back</button> {/* Back Button */}
+
       <div className="cart-box">
         <h2>Your Cart</h2>
         {cartItems.length === 0 ? (
@@ -193,7 +161,11 @@ const Cart = () => {
               <li key={recipe.id}>
                 <h3>{recipe.title}</h3>
                 <img src={recipe.imageUrl} alt={recipe.title} width="150" />
-                <button onClick={() => removeFromCart(recipe)}>Remove</button>
+                <p>Difficulty: {recipe.difficulty}</p>
+                <p>Price: ${(recipe.price || 0).toFixed(2)}</p>
+                <button onClick={() => removeFromCart(recipe)} className="remove-button">
+                  <DeleteIcon />
+                </button>
               </li>
             ))}
           </ul>
@@ -201,85 +173,87 @@ const Cart = () => {
       </div>
 
       <div className="middle-column">
-        <div className="personal-info">
-          <h2>Payment Information</h2>
-          <form onSubmit={handleSubmit}>
-            <label>
-              Card Number:
-              <input
-                type="text"
-                name="cardNumber"
-                value={paymentInfo.cardNumber}
-                onChange={handleChange}
-                required
-                maxLength="16"
-                inputMode="numeric"
-                pattern="\d{16}"
-                title="Please enter a valid 16-digit card number"
-              />
-            </label>
-            <label>
-              CVC:
-              <input
-                type="text"
-                name="cvc"
-                value={paymentInfo.cvc}
-                onChange={handleChange}
-                required
-                maxLength="4"
-                inputMode="numeric"
-                pattern="\d{3,4}"
-                title="Please enter a valid 3 or 4-digit CVC"
-              />
-            </label>
-            <label>
-              Expiration Date:
-              <input
-                type="text"
-                name="expDate"
-                value={paymentInfo.expDate}
-                onChange={handleChange}
-                required
-                placeholder="MM/YY"
-              />
-            </label>
-            <label>
-              Name:
-              <input
-                type="text"
-                name="name"
-                value={paymentInfo.name}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <label>
-              Address:
-              <input
-                type="text"
-                name="address"
-                value={paymentInfo.address}
-                onChange={handleChange}
-                required
-              />
-            </label>
-            <label>
-              Zip Code:
-              <input
-                type="text"
-                name="zipCode"
-                value={paymentInfo.zipCode}
-                onChange={handleChange}
-                required
-              />
-            </label>
-          </form>
-        </div>
+        <details className="personal-info-dropdown">
+          <summary>Personal Information</summary>
+          <div className="personal-info">
+            <form onSubmit={handleSubmit}>
+              <label>
+                Card Number:
+                <input
+                  type="text"
+                  name="cardNumber"
+                  value={paymentInfo.cardNumber}
+                  onChange={handleChange}
+                  required
+                  maxLength="16"
+                  inputMode="numeric"
+                  pattern="\d{16}"
+                  title="Please enter a valid 16-digit card number"
+                />
+              </label>
+              <label>
+                CVC:
+                <input
+                  type="text"
+                  name="cvc"
+                  value={paymentInfo.cvc}
+                  onChange={handleChange}
+                  required
+                  maxLength="4"
+                  inputMode="numeric"
+                  pattern="\d{3,4}"
+                  title="Please enter a valid 3 or 4-digit CVC"
+                />
+              </label>
+              <label>
+                Expiration Date (MM/YY):
+                <input
+                  type="text"
+                  name="expDate"
+                  value={paymentInfo.expDate}
+                  onChange={handleChange}
+                  required
+                  placeholder="MM/YY"
+                />
+              </label>
+              <label>
+                Name:
+                <input
+                  type="text"
+                  name="name"
+                  value={paymentInfo.name}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                Address:
+                <input
+                  type="text"
+                  name="address"
+                  value={paymentInfo.address}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+              <label>
+                Zip Code:
+                <input
+                  type="text"
+                  name="zipCode"
+                  value={paymentInfo.zipCode}
+                  onChange={handleChange}
+                  required
+                />
+              </label>
+            </form>
+          </div>
+        </details>
 
         <div className="delivery-time-frame">
           <h2>Delivery Time Frame</h2>
           <label>
-            Select Delivery Time Frame:
+            Select:
             <select
               name="timeFrame"
               value={timeFrame}
@@ -287,9 +261,20 @@ const Cart = () => {
               required
             >
               <option value="">Select a time frame</option>
-              <option value="morning">Morning (8 AM - 12 PM)</option>
-              <option value="afternoon">Afternoon (12 PM - 4 PM)</option>
-              <option value="evening">Evening (4 PM - 8 PM)</option>
+              <optgroup label="Today">
+                {todayTimeFrames.map((timeFrame) => (
+                  <option key={timeFrame} value={timeFrame}>
+                    {timeFrame}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Tomorrow">
+                {tomorrowTimeFrames.map((timeFrame) => (
+                  <option key={timeFrame} value={timeFrame}>
+                    {timeFrame}
+                  </option>
+                ))}
+              </optgroup>
             </select>
           </label>
         </div>
@@ -297,8 +282,21 @@ const Cart = () => {
 
       <div className="order-summary">
         <h2>Order Summary</h2>
-        <p>Total Price: ${totalPrice.toFixed(2)}</p>
-        <p>Earned Coins: {Math.floor(totalPrice * 0.2)}</p>
+        {cartItems.length === 0 ? (
+          <p>No items in order</p>
+        ) : (
+          <ul>
+            {cartItems.map((recipe, index) => (
+              <li key={index} className="order-item">
+                <p>{recipe.title}: ${(recipe.price || 0).toFixed(2)}</p>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="summary-details">
+          <p>Total Price: ${totalPrice.toFixed(2)}</p>
+          <p>Earned Coins: {Math.floor(totalPrice * 0.2)}</p>
+        </div>
         <button onClick={handleSubmit}>Place Order</button>
       </div>
     </div>

@@ -17,9 +17,10 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.env
 
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-recipe-4b027-firebase-adminsdk-4h100-3197c008ab.json
+firebase-config.js
