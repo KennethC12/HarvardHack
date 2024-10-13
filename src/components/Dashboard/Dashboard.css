@@ -27,7 +27,7 @@
 /* Icon Group */
 .icon-group {
   position: absolute;
-  top: 40px; /* Increased from 20px to 40px to move icons down */
+  top: 50px; /* Increased from 20px to 40px to move icons down */
   right: 50px;
   display: flex;
   gap: 20px;
@@ -55,7 +55,7 @@
 .search-bar {
   position: relative;
   margin: 0 auto; /* Center horizontally */
-  margin-top: 60px; /* Decreased from 80px to 60px to move search bar up */
+  margin-top: 30px; /* Decreased from 80px to 60px to move search bar up */
   width: 400px;
 }
 
@@ -75,6 +75,7 @@
   gap: 30px;
   margin-top: 20px;
   margin-bottom: 10px;
+  
 }
 
 .cuisine-button {
