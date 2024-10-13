@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/HarvardHack/static/css/main.4ed5f91c.css",
+    "main.js": "/HarvardHack/static/js/main.26a82fd0.js",
+    "static/js/453.f16fb396.chunk.js": "/HarvardHack/static/js/453.f16fb396.chunk.js",
+    "index.html": "/HarvardHack/index.html",
+    "main.4ed5f91c.css.map": "/HarvardHack/static/css/main.4ed5f91c.css.map",
+    "main.26a82fd0.js.map": "/HarvardHack/static/js/main.26a82fd0.js.map",
+    "453.f16fb396.chunk.js.map": "/HarvardHack/static/js/453.f16fb396.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4ed5f91c.css",
+    "static/js/main.26a82fd0.js"
+  ]
+}
