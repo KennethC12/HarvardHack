@@ -252,15 +252,17 @@ const Cart = () => {
 
         <div className="delivery-time-frame">
           <h2>Delivery Time Frame</h2>
+          <h3></h3>
           <label>
             Select:
+            <label> </label>
             <select
-              name="timeFrame"
+              name=" timeFrame"
               value={timeFrame}
               onChange={(e) => setTimeFrame(e.target.value)}
               required
             >
-              <option value="">Select a time frame</option>
+              <option value="">Select a time frame </option>
               <optgroup label="Today">
                 {todayTimeFrames.map((timeFrame) => (
                   <option key={timeFrame} value={timeFrame}>
