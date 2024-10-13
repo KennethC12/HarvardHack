@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import RecipeCard from '../RecipeCard/RecipeCard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -26,11 +26,11 @@ function Dashboard() {
     marginTop: '20px',
   };
 
-  // Harvard University as center
-  const center = {
-    lat: 42.3770, // Harvard University latitude
+  // Memoize the 'center' object using useMemo
+  const center = useMemo(() => ({
+    lat: 42.3770,  // Harvard University latitude
     lng: -71.1167, // Harvard University longitude
-  };
+  }), []); // Empty dependency array because the center doesn't change
 
   // Fetch recipes from Firestore on component mount
   useEffect(() => {
@@ -56,6 +56,7 @@ function Dashboard() {
 
   // Handle cuisine selection
   const handleCuisineSelect = (cuisine) => {
+    console.log('Selected Cuisine:', cuisine); // Debugging log
     setSelectedCuisine(cuisine);
   };
 
@@ -84,8 +85,12 @@ function Dashboard() {
   // Filter the recipes based on the search term and selected cuisine
   const filteredRecipes = recipes.filter((recipe) =>
     recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (!selectedCuisine || recipe.cuisineType === selectedCuisine)
+    (!selectedCuisine || recipe.cuisineType.toLowerCase() === selectedCuisine.toLowerCase())
   );
+
+  useEffect(() => {
+    console.log('Filtered Recipes:', filteredRecipes); // Debugging log
+  }, [filteredRecipes]);
 
   // Group the filtered recipes by cuisine type
   const groupedRecipes = groupByCuisineType(filteredRecipes);
@@ -123,7 +128,7 @@ function Dashboard() {
   const cuisines = [
     { name: 'Mexican', icon: '🌮' },
     { name: 'Chinese', icon: '🥡' },
-    { name: 'Soul Food', icon: '🍗' },
+    { name: 'Soul', icon: '🍗' },
     { name: 'Korean', icon: '🍲' },
     { name: 'Vietnamese', icon: '🍜' },
     { name: 'American', icon: '🌭' },
@@ -138,7 +143,7 @@ function Dashboard() {
     if (map) {
       const service = new window.google.maps.places.PlacesService(map);
       const request = {
-        location: center,
+        location: center,  // Use memoized center
         radius: radius, // 5 miles radius
         type: ['grocery_or_supermarket'], // Grocery stores
       };
@@ -149,7 +154,7 @@ function Dashboard() {
         }
       });
     }
-  }, [map, radius]);
+  }, [map, radius, center]); // Include center in the dependency array
 
   // On map load, set map instance
   const onMapLoad = (mapInstance) => {
@@ -276,7 +281,7 @@ function Dashboard() {
             <GoogleMap
               id="grocery-map"
               mapContainerStyle={mapContainerStyle}
-              center={center}
+              center={center} // Use memoized center
               zoom={12}
               onLoad={onMapLoad}
             >

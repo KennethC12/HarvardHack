@@ -8,11 +8,22 @@
 }
 
 .back-button {
-  background: none;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  margin-bottom: 20px;
+  position: absolute; /* Make sure it's positioned */
+  top: 20px; /* Position it near the top */
+  left: 20px; /* Position it near the left */
+  background-color: #808080; /* Gray color */
+  color: white; /* White text color */
+  border: none; /* Remove border */
+  padding: 10px 16px; /* Adjust padding for size */
+  cursor: pointer; /* Pointer cursor */
+  font-size: 16px; /* Font size */
+  border-radius: 4px; /* Rounded corners */
+  z-index: 1000; /* Ensure it's on top of other elements */
+  display: inline-block; /* Ensure the button displays */
+}
+
+.back-button:active {
+  background-color: #505050; /* Darker color when active */
 }
 
 .recipe-detail h1 {
